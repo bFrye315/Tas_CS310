@@ -1,13 +1,12 @@
 package edu.jsu.mcis.cs310.tas_fa21;
 
-//This is just a test
-
 import org.junit.*;
 import static org.junit.Assert.*;
 
 public class Feature1 {
 
     private TASDatabase db;
+    //System.out.println("");
     
     @Before
     public void setup() {
