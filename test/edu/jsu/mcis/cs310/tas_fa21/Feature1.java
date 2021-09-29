@@ -6,7 +6,6 @@ import static org.junit.Assert.*;
 public class Feature1 {
 
     private TASDatabase db;
-    //System.out.println("");
     
     @Before
     public void setup() {
