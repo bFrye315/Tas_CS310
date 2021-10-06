@@ -12,7 +12,7 @@ public class TASDatabase {
     private Connection conn = null;
     private String query;
     private PreparedStatement prstSelect = null, prstUpdate = null;
-    private ResultSet resultSet = null;
+    private ResultSet resultsSet = null;
     private boolean hasResults;
     private int currentCount;
     
@@ -44,8 +44,32 @@ public class TASDatabase {
         }
         catch(SQLException e){}
         finally{
-            if(resultSet != null){try{resultSet.close(); resultSet = null;} catch(SQLException e){}}
+            if(resultsSet != null){try{resultsSet.close(); resultsSet = null;} catch(SQLException e){}}
             if(prstSelect != null){try{prstSelect.close(); prstSelect = null;} catch(SQLException e){}}
+        }
+    }
+    
+    public Punch getPunch(int id){ //Punch class haven't been made yet so until then there will be a error
+        Punch outputPunch;
+        try{
+            //Prepares the query
+            query = "SELECT * FROM (Note: pucnh class goes here ~ Montell Norman) WHERE id = " + id;
+            prstSelect = conn.prepareStatement(query);
+            
+            //Executing the query
+            hasResults = prstSelect.execute();
+            
+            while(hasResults || prstSelect.getUpdateCount() != -1){
+                if(hasResults){
+                    resultsSet = prstSelect.getResultSet();
+                    resultsSet.next();
+                    
+                    int terminalId = resultsSet.getInt("terminalId");
+                    String badgeId = resultsSet.getString("badgeId");
+                    long orgTime = resultsSet.getTimestamp("originalTimestamp").getTime(); 
+                    int ptypeId = resultsSet.getInt("punchTypeId");
+                }
+            }
         }
     }
 }
