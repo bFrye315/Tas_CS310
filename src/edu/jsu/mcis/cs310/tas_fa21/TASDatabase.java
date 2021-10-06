@@ -50,7 +50,7 @@ public class TASDatabase {
     }
     
     public Punch getPunch(int id){ //Punch class haven't been made yet so until then there will be a error
-        Punch outputPunch;
+        //Punch outputPunch;
         try{
             //Prepares the query
             query = "SELECT * FROM (Note: pucnh class goes here ~ Montell Norman) WHERE id = " + id;
@@ -66,16 +66,17 @@ public class TASDatabase {
                     
                     int terminalid = resultsSet.getInt("terminalId");
                     String badge = resultsSet.getString("badgeid");
-                    //long orgTime = resultsSet.getTimestamp("originalTimestamp").getTime(); 
+                    long orgTime = resultsSet.getTimestamp("originalTimestamp").getTime(); 
                     int punchtypeid = resultsSet.getInt("punchTypeId");
                     
-                    outputPunch = new Punch(getDescription(badge), terminalid, punchtypeid);
-                    //outputPunch.setOriginalTimeStamp(orgTime);
+                    //outputPunch = new Punch(terminalid, badge.getId(), punchtypeid);
+                   // outputPunch.setOriginalTimeStamp(orgTime);
                 }
             }
         }
         catch(SQLException e){
             return null;
         }
+        return null;
     }
 }
