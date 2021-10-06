@@ -64,12 +64,18 @@ public class TASDatabase {
                     resultsSet = prstSelect.getResultSet();
                     resultsSet.next();
                     
-                    int terminalId = resultsSet.getInt("terminalId");
-                    String badgeId = resultsSet.getString("badgeId");
-                    long orgTime = resultsSet.getTimestamp("originalTimestamp").getTime(); 
-                    int ptypeId = resultsSet.getInt("punchTypeId");
+                    int terminalid = resultsSet.getInt("terminalId");
+                    String badge = resultsSet.getString("badgeid");
+                    //long orgTime = resultsSet.getTimestamp("originalTimestamp").getTime(); 
+                    int punchtypeid = resultsSet.getInt("punchTypeId");
+                    
+                    outputPunch = new Punch(getDescription(badge), terminalid, punchtypeid);
+                    //outputPunch.setOriginalTimeStamp(orgTime);
                 }
             }
+        }
+        catch(SQLException e){
+            return null;
         }
     }
 }
