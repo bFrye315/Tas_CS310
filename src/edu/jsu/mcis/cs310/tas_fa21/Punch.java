@@ -10,19 +10,20 @@ public class Punch {
     private int terminalid;
     private String badgeid;
     private int punchtypeid;
-    private LocalDateTime dt;
+    private LocalDateTime originaltimestamp;
     
-    
+    private String punchtype;
     
     
     public Punch(int terminalid, Badge badge, int punchtypeid){
     this.terminalid = terminalid;
     this.badgeid = badge.getId();
     this.punchtypeid = punchtypeid;
-    
-    
     }
-
+    
+    public Punch(){
+        
+    }
 
     public int getTerminalid() {
         return terminalid;
@@ -36,14 +37,15 @@ public class Punch {
         return punchtypeid;
     }
 
-    public void setDt(LocalDateTime dt) {
-        this.dt = dt;
+    public void setOriginaltimestamp(LocalDateTime originaltimestamp) {
+        this.originaltimestamp = originaltimestamp;
     }
 
-    public LocalDateTime getDt() {
-        return dt;
+    public LocalDateTime getOriginaltimestamp() {
+        return originaltimestamp;
     }
     
+   
 
     public void adjustmenttype(){
         
