@@ -9,16 +9,14 @@ public class Punch {
     
     private int terminalid;
     private String badgeid;
-    private int punchtypeid;
+    private PunchType punchtypeid;
     private LocalDateTime originaltimestamp;
-    
-    private String punchtype;
-    
+
     
     public Punch(int terminalid, Badge badge, int punchtypeid){
     this.terminalid = terminalid;
     this.badgeid = badge.getId();
-    this.punchtypeid = punchtypeid;
+    this.punchtypeid = PunchType.values()[punchtypeid];
     }
     
     public Punch(){
@@ -33,7 +31,7 @@ public class Punch {
         return badgeid;
     }
 
-    public int getPunchtypeid() {
+    public PunchType getPunchtypeid() {
         return punchtypeid;
     }
 
@@ -52,7 +50,7 @@ public class Punch {
     }
     
     public String printOriginal(){
-        return "#" + badgeid + " " + punchtypeid + ": " ;
+        return "#" + badgeid + " " + punchtypeid + ": " + originaltimestamp;
     }
     
 }
