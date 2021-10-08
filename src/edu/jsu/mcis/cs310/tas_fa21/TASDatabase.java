@@ -50,11 +50,11 @@ public class TASDatabase {
         }
     }
     
-    public Punch getPunch(String badgeid){ //Punch class haven't been made yet so until then there will be a error
+    public Punch getPunch(int punchid){ //Punch class haven't been made yet so until then there will be a error
         Punch outputPunch;
         try{
             //Prepares the query
-            query = "SELECT * FROM (Note: pucnh class goes here ~ Montell Norman) WHERE id = " + badgeid;
+            query = "SELECT * FROM (Note: pucnh class goes here ~ Montell Norman) WHERE id = " + punchid;
             prstSelect = conn.prepareStatement(query);
             
             //Executing the query
@@ -66,12 +66,12 @@ public class TASDatabase {
                     resultsSet.next();
                     
                     int terminalid = resultsSet.getInt("terminalId");
-                    String badge = resultsSet.getString("badgeid");
-                    LocalDateTime originaltimestamp = resultsSet.getTimestamp("originalTimestamp"); 
+                    Badge badge = getBadge(resultsSet.getString("badgeid"));
+                    Timestamp originaltimestamp = resultsSet.getTimestamp("originalTimestamp"); 
                     int punchtypeid = resultsSet.getInt("punchTypeId");
                     
-                    outputPunch = new Punch(resultsSet.getInt("terminalId"), resultsSet.getString("badgeid"), 
-                            resultsSet.getInt("punchTypeId"));
+                    outputPunch = new Punch(/**resultsSet.getInt("terminalId")*/terminalid, /**resultsSet.getString("badgeid")*/badge, 
+                            /**resultsSet.getInt("punchTypeId")*/punchtypeid);
                     outputPunch.setOriginaltimestamp(originaltimestamp);
                     
                     return outputPunch;
