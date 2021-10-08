@@ -50,11 +50,13 @@ public class TASDatabase {
         }
     }
     
-    public Punch getPunch(String badgeid){ //Punch class haven't been made yet so until then there will be a error
+    public Punch getPunch(int punchid){ //Punch class haven't been made yet so until then there will be a error
         Punch outputPunch;
         try{
             //Prepares the query
+
             query = "SELECT * FROM tas.punch WHERE id = " + badgeid;
+
             prstSelect = conn.prepareStatement(query);
             
             //Executing the query
@@ -70,8 +72,10 @@ public class TASDatabase {
                     Timestamp originaltimestamp = resultsSet.getTimestamp("originaltimestamp");
                     int punchtypeid = resultsSet.getInt("punchTypeId");
                     
+
                     outputPunch = new Punch(resultsSet.getInt("terminalId"), getBadge("badgeid"), 
                             resultsSet.getInt("punchTypeId"));
+
                     outputPunch.setOriginaltimestamp(originaltimestamp);
                     
                     return outputPunch;

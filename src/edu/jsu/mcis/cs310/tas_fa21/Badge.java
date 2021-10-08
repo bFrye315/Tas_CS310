@@ -1,7 +1,7 @@
 
 package edu.jsu.mcis.cs310.tas_fa21;
 
-public class Badge {_
+public class Badge {
         //Properties
     
     private String id;

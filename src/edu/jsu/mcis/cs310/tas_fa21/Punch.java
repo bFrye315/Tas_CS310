@@ -35,16 +35,15 @@ public class Punch {
         return punchtypeid;
     }
 
-    public void setOriginaltimestamp(LocalDateTime originaltimestamp) {
-        this.originaltimestamp = originaltimestamp;
+    public void setOriginaltimestamp(Timestamp originaltimestamp) {
+        LocalDateTime localDT = originaltimestamp.toLocalDateTime();
+        this.originaltimestamp = localDT;
     }
 
     public LocalDateTime getOriginaltimestamp() {
         return originaltimestamp;
     }
     
-   
-
     public void adjustmenttype(){
         
     }
