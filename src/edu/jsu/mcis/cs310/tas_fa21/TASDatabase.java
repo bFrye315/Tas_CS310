@@ -54,7 +54,7 @@ public class TASDatabase {
         Punch outputPunch;
         try{
             //Prepares the query
-            query = "SELECT * FROM (Note: pucnh class goes here ~ Montell Norman) WHERE id = " + badgeid;
+            query = "SELECT * FROM tas.punch WHERE id = " + badgeid;
             prstSelect = conn.prepareStatement(query);
             
             //Executing the query
@@ -67,7 +67,7 @@ public class TASDatabase {
                     
                     int terminalid = resultsSet.getInt("terminalId");
                     String badge = resultsSet.getString("badgeid");
-                    LocalDateTime originaltimestamp = resultsSet.getTimestamp("originalTimestamp"); 
+                    Timestamp originaltimestamp = resultsSet.getTimestamp("originaltimestamp");
                     int punchtypeid = resultsSet.getInt("punchTypeId");
                     
                     outputPunch = new Punch(resultsSet.getInt("terminalId"), resultsSet.getString("badgeid"), 
@@ -85,7 +85,7 @@ public class TASDatabase {
     public Badge getBadge(String id){
         Badge outputBadge;
         try{
-            query = "SELECT * FROM (Note: badge class goes here ~ Montell Norman) WHERE id = \"" + id +
+            query = "SELECT * FROM tas.badge WHERE id = \"" + id +
                     "\"";
             prstSelect = conn.prepareStatement(query);
             
@@ -108,7 +108,7 @@ public class TASDatabase {
     public Shift getShift(String id){ //Don't have the Shift class so all this is subject to change once Shift is implemented
         Shift outputShift;
         try{
-            query = "SELECT * FROM (Note: shift class goes here ~ Montell Norman) WHERE id = " + id;
+            query = "SELECT * FROM tas.shift WHERE id = " + id;
             prstSelect = conn.prepareStatement(query);
             
             hasResults = prstSelect.execute();
