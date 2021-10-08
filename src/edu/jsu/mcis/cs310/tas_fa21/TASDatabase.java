@@ -55,7 +55,7 @@ public class TASDatabase {
         try{
             //Prepares the query
 
-            query = "SELECT * FROM tas.punch WHERE id = " + badgeid;
+            query = "SELECT * FROM tas.punch WHERE id = " + punchid;
 
             prstSelect = conn.prepareStatement(query);
             
@@ -133,4 +133,6 @@ public class TASDatabase {
         catch(SQLException e){System.out.println(e);}
         return null;
     }
-}
+    public void Shift(Badge badge){
+        
+    }
