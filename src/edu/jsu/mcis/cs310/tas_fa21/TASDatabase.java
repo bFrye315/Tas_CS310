@@ -123,9 +123,17 @@ public class TASDatabase {
                     resultsSet.next();
                     
                     //Can't really add anything here without the shift class so it'll remain blank for the time being
+                    String description = resultsSet.getString("description");
+                    LocalTime start = LocalTime.parse(resultsSet.getString("start"));
+                    LocalTime stop = LocalTime.parse(resultsSet.getString("stop"));
+                    String interval = resultsSet.getString("interval");
+                    String graceperiod = resultsSet.getString("graceperiod");
+                    String dock = resultsSet.getString("dock");
+                    LocalTime lunchstart = LocalTime.parse(resultsSet.getString("lunchstart"));
+                    LocalTime lunchstop = LocalTime.parse(resultsSet.getString("lunchstop"));
+                    String lunchdeduct = resultsSet.getString("lunchdeduct");
                     
-                    
-                    outputShift = new Sift();
+                    outputShift = new Shift();
                     return outputShift;
                 }
             }
@@ -136,3 +144,4 @@ public class TASDatabase {
     public void Shift(Badge badge){
         
     }
+}
