@@ -17,8 +17,8 @@ import org.json.simple.*;
 
 public class Shift {
      private String description;
-     private String start;
-     private String stop;
+     private LocalTime start;
+     private LocalTime stop;
      private String interval;
      private String graceperiod;
      private String dock;
@@ -27,11 +27,18 @@ public class Shift {
      private String lunchdeduct;
      int time;
 
+     
+    public Shift(String description, Timestamp start, Timestamp stop){
+        this.description = description;
+        this.start = convertStamptolocal(start);
+        this.stop = convertStamptolocal(stop);
+    }
+     
     public String getDescription() {
         return description;
     }
 
-    public String getStart() {
+    public LocalTime getStart() {
         /*
         “Shift Start” and “Shift Stop” to refer to the regularly scheduled starting 
         and stopping times of the employee’s shift
@@ -40,7 +47,7 @@ public class Shift {
         return start;
     }
 
-    public String getStop() {
+    public LocalTime getStop() {
         return stop;
     }
 
@@ -86,6 +93,16 @@ public class Shift {
     public String getLunchdeduct() {
         return lunchdeduct;
     }
-     
-     
+    
+    public LocalTime convertStamptolocal(Timestamp original){
+        LocalDateTime localtd = original.toLocalDateTime();
+        LocalTime localt = localtd.toLocalTime();
+        return localt;
+        
+    }
+    
+    @Override
+    public String toString(){
+        return getDescription() + ":";
+    }
 }
