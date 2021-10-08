@@ -70,7 +70,7 @@ public class TASDatabase {
                     Timestamp originaltimestamp = resultsSet.getTimestamp("originaltimestamp");
                     int punchtypeid = resultsSet.getInt("punchTypeId");
                     
-                    outputPunch = new Punch(resultsSet.getInt("terminalId"), resultsSet.getString("badgeid"), 
+                    outputPunch = new Punch(resultsSet.getInt("terminalId"), getBadge("badgeid"), 
                             resultsSet.getInt("punchTypeId"));
                     outputPunch.setOriginaltimestamp(originaltimestamp);
                     
