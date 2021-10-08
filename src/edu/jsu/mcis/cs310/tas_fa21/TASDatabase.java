@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 
 
 public class TASDatabase {
@@ -49,11 +50,11 @@ public class TASDatabase {
         }
     }
     
-    public Punch getPunch(int id){ //Punch class haven't been made yet so until then there will be a error
-        //Punch outputPunch;
+    public Punch getPunch(String badgeid){ //Punch class haven't been made yet so until then there will be a error
+        Punch outputPunch;
         try{
             //Prepares the query
-            query = "SELECT * FROM (Note: pucnh class goes here ~ Montell Norman) WHERE id = " + id;
+            query = "SELECT * FROM (Note: pucnh class goes here ~ Montell Norman) WHERE id = " + badgeid;
             prstSelect = conn.prepareStatement(query);
             
             //Executing the query
@@ -66,17 +67,66 @@ public class TASDatabase {
                     
                     int terminalid = resultsSet.getInt("terminalId");
                     String badge = resultsSet.getString("badgeid");
-                    long orgTime = resultsSet.getTimestamp("originalTimestamp").getTime(); 
+                    LocalDateTime originaltimestamp = resultsSet.getTimestamp("originalTimestamp"); 
                     int punchtypeid = resultsSet.getInt("punchTypeId");
                     
-                    //outputPunch = new Punch(terminalid, badge.getId(), punchtypeid);
-                   // outputPunch.setOriginalTimeStamp(orgTime);
+                    outputPunch = new Punch(resultsSet.getInt("terminalId"), resultsSet.getString("badgeid"), 
+                            resultsSet.getInt("punchTypeId"));
+                    outputPunch.setOriginaltimestamp(originaltimestamp);
+                    
+                    return outputPunch;
                 }
             }
         }
-        catch(SQLException e){
-            return null;
+        catch(SQLException e){System.out.println(e);}
+        return null;
+    }
+    
+    public Badge getBadge(String id){
+        Badge outputBadge;
+        try{
+            query = "SELECT * FROM (Note: badge class goes here ~ Montell Norman) WHERE id = \"" + id +
+                    "\"";
+            prstSelect = conn.prepareStatement(query);
+            
+            hasResults = prstSelect.execute();
+            
+            while(hasResults || prstSelect.getUpdateCount() != -1){
+                if(hasResults){
+                    resultsSet = prstSelect.getResultSet();
+                    resultsSet.next();
+                    
+                    outputBadge = new Badge(resultsSet.getString("badgeID"), resultsSet.getString("badgeDescription"));
+                    return outputBadge;
+                }
+            }
         }
+        catch(SQLException e){System.out.println("Error in getBadge");}
+        return null;
+    }
+    
+    public Shift getShift(String id){ //Don't have the Shift class so all this is subject to change once Shift is implemented
+        Shift outputShift;
+        try{
+            query = "SELECT * FROM (Note: shift class goes here ~ Montell Norman) WHERE id = " + id;
+            prstSelect = conn.prepareStatement(query);
+            
+            hasResults = prstSelect.execute();
+            
+            while(hasResults || prstSelect.getUpdateCount() != -1){
+                if(hasResults){
+                    resultsSet = prstSelect.getResultSet();
+                    resultsSet.next();
+                    
+                    //Can't really add anything here without the shift class so it'll remain blank for the time being
+                    
+                    
+                    outputShift = new Sift();
+                    return outputShift;
+                }
+            }
+        }
+        catch(SQLException e){System.out.println(e);}
         return null;
     }
 }
