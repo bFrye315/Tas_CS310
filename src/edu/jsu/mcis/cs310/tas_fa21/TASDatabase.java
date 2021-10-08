@@ -50,7 +50,7 @@ public class TASDatabase {
         }
     }
     
-    public Punch getPunch(int punchid){ //Punch class haven't been made yet so until then there will be a error
+    public Punch getPunch(int punchid){
         Punch outputPunch;
         try{
             //Prepares the query
@@ -109,7 +109,7 @@ public class TASDatabase {
         return null;
     }
     
-    public Shift getShift(String id){ //Don't have the Shift class so all this is subject to change once Shift is implemented
+    public Shift getShift(String id){
         Shift outputShift;
         try{
             query = "SELECT * FROM tas.shift WHERE id = " + id;
@@ -122,7 +122,6 @@ public class TASDatabase {
                     resultsSet = prstSelect.getResultSet();
                     resultsSet.next();
                     
-                    //Can't really add anything here without the shift class so it'll remain blank for the time being
                     String description = resultsSet.getString("description");
                     LocalTime start = LocalTime.parse(resultsSet.getString("start"));
                     LocalTime stop = LocalTime.parse(resultsSet.getString("stop"));
