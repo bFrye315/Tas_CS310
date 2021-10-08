@@ -11,22 +11,20 @@ package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.util.*;
 import java.time.*;
-import java.io.*;
 import java.sql.*;
 import com.opencsv.*;
 import org.json.simple.*;
-import org.json.simple.parser.*;
 
 public class Shift {
-     String description;
-     String start;
-     String stop;
-     String interval;
-     String graceperiod;
-     String dock;
-     String lunchstart;
-     String lunchstop;
-     String lunchdeduct;
+     private String description;
+     private String start;
+     private String stop;
+     private String interval;
+     private String graceperiod;
+     private String dock;
+     private String lunchstart;
+     private String lunchstop;
+     private String lunchdeduct;
      int time;
 
     public String getDescription() {
