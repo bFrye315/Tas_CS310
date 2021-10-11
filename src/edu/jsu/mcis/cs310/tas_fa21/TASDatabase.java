@@ -131,8 +131,7 @@ public class TASDatabase {
                     LocalTime lunchstop = LocalTime.parse(resultsSet.getString("lunchstop"));
                     String lunchdeduct = resultsSet.getString("lunchdeduct");
                     
-                    outputShift = new Shift(id, description, start, stop, interval, graceperiod, dock, 
-                            lunchstart, lunchstop, lunchdeduct);
+                    outputShift = new Shift();
                     return outputShift;
                 }
             }
@@ -140,6 +139,7 @@ public class TASDatabase {
         catch(SQLException e){System.out.println(e);}
         return null;
     }
+    
     public Shift getShift(Badge badge){ //For James: Okay so basically this is exactly similar to the previous line of code so the blueprint is there for you
         try{
             query = "SELECT * (Note: Blank for now ~ Montell N.) WHERE id = " + badge.getId() + " ";
@@ -153,5 +153,15 @@ public class TASDatabase {
                 }
             }
         }
+        catch(SQLException e){System.out.println(e);}
+        return null;
+    }
+    
+    public int insertPunch(Punch p){
+        
+    }
+    
+    public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDateTime date){
+        
     }
 }
