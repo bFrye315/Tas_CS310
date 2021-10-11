@@ -108,7 +108,7 @@ public class TASDatabase {
         return null;
     }
     
-    public Shift getShift(String shiftid){
+    public Shift getShift(int shiftid){
         Shift outputShift;
         try{
             query = "SELECT * FROM tas.shift WHERE id = " + shiftid;
