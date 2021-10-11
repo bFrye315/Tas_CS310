@@ -22,16 +22,20 @@ public class Shift {
      private String interval;
      private String graceperiod;
      private String dock;
-     private String lunchstart;
-     private String lunchstop;
+     private LocalTime lunchstart;
+     private LocalTime lunchstop;
      private String lunchdeduct;
+     private int shiftid;
      int time;
 
      
-    public Shift(String description, Timestamp start, Timestamp stop){
+    public Shift(int shiftid, String description, Timestamp start, Timestamp stop, Timestamp lunchstart, Timestamp lunchstop){
+        this.shiftid = shiftid;
         this.description = description;
         this.start = convertStamptolocal(start);
         this.stop = convertStamptolocal(stop);
+        this.lunchstart = convertStamptolocal(lunchstart);
+        this.lunchstop = convertStamptolocal(lunchstop);
     }
      
     public String getDescription() {
@@ -78,7 +82,7 @@ public class Shift {
         return dock;
     }
 
-    public String getLunchstart() {
+    public LocalTime getLunchstart() {
         /*
         “Lunch Start” and “Lunch Stop” to refer to the start and stop of the shift’s 
         scheduled lunch break.
@@ -86,7 +90,7 @@ public class Shift {
         return lunchstart;
     }
 
-    public String getLunchstop() {
+    public LocalTime getLunchstop() {
         return lunchstop;
     }
 
@@ -94,15 +98,14 @@ public class Shift {
         return lunchdeduct;
     }
     
-    public LocalTime convertStamptolocal(Timestamp original){
+    private LocalTime convertStamptolocal(Timestamp original){
         LocalDateTime localtd = original.toLocalDateTime();
         LocalTime localt = localtd.toLocalTime();
-        return localt;
-        
+        return localt;  
     }
     
     @Override
     public String toString(){
-        return getDescription() + ":";
+        return getDescription() + ": " + start + " - " + stop ;
     }
 }
