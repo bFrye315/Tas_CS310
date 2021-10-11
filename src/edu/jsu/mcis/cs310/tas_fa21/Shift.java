@@ -26,6 +26,8 @@ public class Shift {
      private LocalTime lunchstop;
      private String lunchdeduct;
      private int shiftid;
+     private int lunchduration;
+     private int shiftduration;
      int time;
 
      
@@ -36,6 +38,7 @@ public class Shift {
         this.stop = convertStamptolocal(stop);
         this.lunchstart = convertStamptolocal(lunchstart);
         this.lunchstop = convertStamptolocal(lunchstop);
+        
     }
      
     public String getDescription() {
@@ -99,13 +102,32 @@ public class Shift {
     }
     
     private LocalTime convertStamptolocal(Timestamp original){
+        
         LocalDateTime localtd = original.toLocalDateTime();
         LocalTime localt = localtd.toLocalTime();
         return localt;  
     }
     
+    private void setShiftduration(LocalTime start, LocalTime stop){
+        int startmin = (start.getHour() * 60) + start.getMinute();
+        
+        int stopmin = (stop.getHour() * 60) + stop.getMinute();
+        
+        this.shiftduration = stopmin - startmin;
+    }
+    
+    private void setLunchduration(LocalTime lunchstart, LocalTime lunchstop){
+        
+        int startmin = (lunchstart.getHour() * 60) + lunchstart.getMinute();
+        
+        int stopmin = (lunchstop.getHour() * 60) + lunchstop.getMinute();
+        
+        this.lunchduration = stopmin - startmin;
+    }
+    
     @Override
     public String toString(){
-        return getDescription() + ": " + start + " - " + stop ;
+        return getDescription() + ": " + start + " - " + stop + "(" + shiftduration + " minutes); Lunch:" + lunchstart
+                + " - " + lunchstop + "(" + lunchduration + " minutes)";
     }
 }
