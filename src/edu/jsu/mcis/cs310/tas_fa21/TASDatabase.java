@@ -2,7 +2,6 @@ package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.sql.*;
 import java.time.LocalTime;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -108,9 +107,12 @@ public class TASDatabase {
         return null;
     }
     
-    public Shift getShift(int shiftid){
-        Shift outputShift;
+    public Shift getShift(int shiftid) {
+        
+        Shift outputShift = null;
+        
         try{
+            
             query = "SELECT * FROM tas.shift WHERE id = " + shiftid;
             prstSelect = conn.prepareStatement(query);
             
@@ -121,24 +123,28 @@ public class TASDatabase {
                     resultsSet = prstSelect.getResultSet();
                     resultsSet.next();
                     
-                    String description = resultsSet.getString("description");
-                    LocalTime start = LocalTime.parse(resultsSet.getString("start"));
-                    LocalTime stop = LocalTime.parse(resultsSet.getString("stop"));
-                    String interval = resultsSet.getString("interval");
-                    String graceperiod = resultsSet.getString("graceperiod");
-                    String dock = resultsSet.getString("dock");
-                    LocalTime lunchstart = LocalTime.parse(resultsSet.getString("lunchstart"));
-                    LocalTime lunchstop = LocalTime.parse(resultsSet.getString("lunchstop"));
-                    String lunchdeduct = resultsSet.getString("lunchdeduct");
+                    ShiftParameters params = new ShiftParameters();
                     
-                    outputShift = new Shift(shiftid, description, start, stop, interval, 
-                            graceperiod, dock, lunchstart, lunchstop, lunchdeduct);
-                    return outputShift;
+                    params.setDescription(resultsSet.getString("description"));
+                    params.setStart(LocalTime.parse(resultsSet.getString("start")));
+                    params.setStop(LocalTime.parse(resultsSet.getString("stop")));
+                    params.setInterval(resultsSet.getInt("interval"));
+                    params.setGraceperiod(resultsSet.getInt("graceperiod"));
+                    params.setDock(resultsSet.getInt("dock"));
+                    params.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
+                    params.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
+                    params.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
+                    params.setId(shiftid);
+                    
+                    outputShift = new Shift(params);
+                    
                 }
             }
         }
         catch(SQLException e){System.out.println(e);}
-        return null;
+        
+        return outputShift;
+        
     }
     
     public Shift getShift(Badge badge){ //For James: Okay so basically this is exactly similar to the previous line of code so the blueprint is there for you
@@ -193,7 +199,7 @@ public class TASDatabase {
         gCal.setTimeInMillis(date); //Might be wrong
         java.util.Date datesTocheck = gCal.getTime();
         
-        try{
+        try {
             query = "SELECT badgeid, terminalid, punchtypeid, originaltimestamp,"
                     + "punchtypeid FROM tas.punch WHERE badgeid = '" +
                     badge.getId() + "' AND originaltimestamp LIKE '%"
@@ -213,5 +219,7 @@ public class TASDatabase {
                 }
             }
         }
+        catch (Exception e) { e.printStackTrace(); }
+        
     }
 }

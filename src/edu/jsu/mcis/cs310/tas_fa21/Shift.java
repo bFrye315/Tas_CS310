@@ -22,31 +22,36 @@ public class Shift {
     private final int MAXDAILYMIN = 1440;
     
     private String description;
-    private String interval;
-    private String graceperiod;
-    private String dock;
-    private String lunchdeduct;
+    private int interval;
+    private int graceperiod;
+    private int dock;
+    private int lunchdeduct;
      
     private LocalTime start; // can we use localtime
     private LocalTime stop;
-    private LocalDateTime lunchstart; // or is localdatetime better?
-    private LocalDateTime lunchstop;
+    private LocalTime lunchstart; // or is localdatetime better?
+    private LocalTime lunchstop;
      
     private int shiftid;
     private int lunchduration;
     private int shiftduration;
     int time;
 
+    
+    public Shift(ShiftParameters params) {
+        
+    }
      
-    public Shift(int shiftid, String description, Timestamp start, Timestamp stop, Timestamp lunchstart, Timestamp lunchstop){
+    public Shift(int shiftid, String description, LocalTime start, LocalTime stop, LocalTime lunchstart, LocalTime lunchstop){
+        // incomplete argument list
         this.shiftid = shiftid;
         this.description = description;
-        this.start = convertStamptolocal(start);
-        this.stop = convertStamptolocal(stop);
-        this.lunchstart = convertStamptolocal(lunchstart);
-        this.lunchstop = convertStamptolocal(lunchstop);
+        this.start = start;
+        this.stop = stop;
+        this.lunchstart = lunchstart;
+        this.lunchstop = lunchstop;
         setShiftduration(this.start, this.stop);
-        setLunchduration(this.lunchstart, this.lunchstop);
+        //setLunchduration(this.lunchstart, this.lunchstop);
         
     }
      
@@ -67,7 +72,7 @@ public class Shift {
         return stop;
     }
 
-    public String getInterval() {
+    public int getInterval() {
         /*
         The number of minutes beforethe startof a shift, and afterthe endof a shift, 
         in which an employee's early "clock in" and late "clock out" punches are 
@@ -77,7 +82,7 @@ public class Shift {
         return interval;
     }
 
-    public String getGraceperiod() {
+    public int getGraceperiod() {
         /*
         The number of minutes afterthe startof a shift, and beforethe endof a shift, 
         in which an employee's late "clock in" punches or early "clock out" punches are "forgiven." 
@@ -85,7 +90,7 @@ public class Shift {
         return graceperiod;
     }
 
-    public String getDock() {
+    public int getDock() {
         /*
         If a late "clock in" punch is made toolate after the start of the shift to 
         fall within the grace period, the punch is adjusted forward in time from 
@@ -106,7 +111,7 @@ public class Shift {
         return lunchstop;
     }
 
-    public String getLunchdeduct() {
+    public int getLunchdeduct() {
         return lunchdeduct;
     }
         public int getShiftid() {
