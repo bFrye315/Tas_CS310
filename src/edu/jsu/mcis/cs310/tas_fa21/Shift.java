@@ -4,7 +4,7 @@ Badge , Shift , and Punch: Implement a new Java class for each of these business
 Objects of the Badge class will contain information from the database about a single employee badge, 
 and objects of the Shift class will contain information from the database about a single shift ruleset 
 (that is, the starting time, stopping time, and other parameters of a single shift).
-Author: Tyler
+Author: Tyler, Brandon
 Date: 10/1/21
  */
 package edu.jsu.mcis.cs310.tas_fa21;
@@ -33,8 +33,6 @@ public class Shift {
     private LocalTime stop;
     private LocalTime lunchstart; // or is localdatetime better?
     private LocalTime lunchstop;
-     
-    int time;
     
     public Shift(ShiftParameters params) {
         setShiftduration(params.getStart(), params.getStart());
