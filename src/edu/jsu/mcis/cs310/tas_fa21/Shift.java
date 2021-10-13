@@ -12,26 +12,49 @@ package edu.jsu.mcis.cs310.tas_fa21;
 import java.util.*;
 import java.time.*;
 import java.sql.*;
+import java.time.temporal.ChronoUnit;
 
-import org.json.simple.*;
+//import com.opencsv.*;
+//import org.json.simple.*;
 
 public class Shift {
-     private String description;
-     private String start;
-     private String stop;
-     private String interval;
-     private String graceperiod;
-     private String dock;
-     private String lunchstart;
-     private String lunchstop;
-     private String lunchdeduct;
-     int time;
+    private final int MINPERHOUR = 60;
+    private final int MAXDAILYMIN = 1440;
+    
+    private String description;
+    private String interval;
+    private String graceperiod;
+    private String dock;
+    private String lunchdeduct;
+     
+    private LocalTime start; // can we use localtime
+    private LocalTime stop;
+    private LocalDateTime lunchstart; // or is localdatetime better?
+    private LocalDateTime lunchstop;
+     
+    private int shiftid;
+    private int lunchduration;
+    private int shiftduration;
+    int time;
 
+     
+    public Shift(int shiftid, String description, Timestamp start, Timestamp stop, Timestamp lunchstart, Timestamp lunchstop){
+        this.shiftid = shiftid;
+        this.description = description;
+        this.start = convertStamptolocal(start);
+        this.stop = convertStamptolocal(stop);
+        this.lunchstart = convertStamptolocal(lunchstart);
+        this.lunchstop = convertStamptolocal(lunchstop);
+        setShiftduration(this.start, this.stop);
+        setLunchduration(this.lunchstart, this.lunchstop);
+        
+    }
+     
     public String getDescription() {
         return description;
     }
 
-    public String getStart() {
+    public LocalTime getStart() {
         /*
         “Shift Start” and “Shift Stop” to refer to the regularly scheduled starting 
         and stopping times of the employee’s shift
@@ -40,7 +63,7 @@ public class Shift {
         return start;
     }
 
-    public String getStop() {
+    public LocalTime getStop() {
         return stop;
     }
 
@@ -71,7 +94,7 @@ public class Shift {
         return dock;
     }
 
-    public String getLunchstart() {
+    public LocalTime getLunchstart() {
         /*
         “Lunch Start” and “Lunch Stop” to refer to the start and stop of the shift’s 
         scheduled lunch break.
@@ -79,13 +102,59 @@ public class Shift {
         return lunchstart;
     }
 
-    public String getLunchstop() {
+    public LocalTime getLunchstop() {
         return lunchstop;
     }
 
     public String getLunchdeduct() {
         return lunchdeduct;
     }
-     
-     
+        public int getShiftid() {
+        return shiftid;
+    }
+
+    public int getLunchduration() {
+        return lunchduration;
+    }
+
+    public int getShiftduration() {
+        return shiftduration;
+    }
+    private LocalDateTime convertStamptolocal(Timestamp original){
+        
+        LocalDateTime localtd = original.toLocalDateTime();
+        LocalTime localt = localtd.toLocalTime();
+        return localtd;  
+    }
+    
+    private void setShiftduration(LocalTime start, LocalTime stop){
+        int startmin = (start.getHour() * MINPERHOUR) + start.getMinute();
+        int stopmin = (stop.getHour() * MINPERHOUR) + stop.getMinute();
+        if(start.isBefore(stop)){
+            this.shiftduration = stopmin - startmin;
+        }
+        else{
+            this.shiftduration = (MAXDAILYMIN - startmin) + stopmin;
+        }
+    }
+    
+    private void setLunchduration(LocalDateTime lunchstart, LocalDateTime lunchstop){
+        long min = ChronoUnit.MINUTES.between(lunchstart, lunchstop); // look at using this for getting total minutes
+        // the following is the original idea
+        int startmin = (lunchstart.getHour() * MINPERHOUR) + lunchstart.getMinute();
+        int stopmin = (lunchstop.getHour() * MINPERHOUR) + lunchstop.getMinute();
+        if(lunchstart.isBefore(lunchstop)){
+            this.lunchduration = stopmin - startmin;
+        }
+        else{
+            this.lunchduration = (MAXDAILYMIN - startmin) + stopmin;
+        }
+        
+    }
+    
+    @Override
+    public String toString(){
+        return getDescription() + ": " + start + " - " + stop + "(" + shiftduration + " minutes); Lunch:" + lunchstart
+                + " - " + lunchstop + "(" + lunchduration + " minutes)";
+    }
 }

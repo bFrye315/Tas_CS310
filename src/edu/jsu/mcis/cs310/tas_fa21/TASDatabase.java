@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
-
+//Feature 1
 public class TASDatabase {
     private Connection conn = null;
     private String query;
@@ -54,7 +54,6 @@ public class TASDatabase {
         Punch outputPunch;
         try{
             //Prepares the query
-
             query = "SELECT * FROM tas.punch WHERE id = " + punchid;
 
             prstSelect = conn.prepareStatement(query);
@@ -109,10 +108,10 @@ public class TASDatabase {
         return null;
     }
     
-    public Shift getShift(String id){
+    public Shift getShift(int shiftid){
         Shift outputShift;
         try{
-            query = "SELECT * FROM tas.shift WHERE id = " + id;
+            query = "SELECT * FROM tas.shift WHERE id = " + shiftid;
             prstSelect = conn.prepareStatement(query);
             
             hasResults = prstSelect.execute();
@@ -132,7 +131,8 @@ public class TASDatabase {
                     LocalTime lunchstop = LocalTime.parse(resultsSet.getString("lunchstop"));
                     String lunchdeduct = resultsSet.getString("lunchdeduct");
                     
-                    outputShift = new Shift();
+                    outputShift = new Shift(shiftid, description, start, stop, interval, 
+                            graceperiod, dock, lunchstart, lunchstop, lunchdeduct);
                     return outputShift;
                 }
             }
@@ -140,7 +140,78 @@ public class TASDatabase {
         catch(SQLException e){System.out.println(e);}
         return null;
     }
-    public void Shift(Badge badge){
+    
+    public Shift getShift(Badge badge){ //For James: Okay so basically this is exactly similar to the previous line of code so the blueprint is there for you
+        try{
+            query = "SELECT * (Note: Blank for now ~ Montell N.) WHERE id = " + badge.getId() + " ";
+            prstSelect = conn.prepareStatement(query);
+            
+            hasResults = prstSelect.execute();
+            while(hasResults || prstSelect.getUpdateCount() != -1){
+                if(hasResults){
+                    resultsSet = prstSelect.getResultSet();
+                    resultsSet.next();
+                }
+            }
+        }
+        catch(SQLException e){System.out.println(e);}
+        return null;
+    }
+    
+    //Feature 2 
+    public int insertPunch(Punch p){
+        int terminalid = p.getTerminalid();
+        String badgeid = p.getBadgeid();
+        LocalDateTime originaltimestamps = p.getOriginaltimestamp();
+        PunchType punchtypeid = p.getPunchtypeid();
         
+        //This part will convert from TimeStamp to String
+        Timestamp originaltimestamp = new Timestamp(originaltimestamps);
+        String date = "YYYY-MM-DD";
+        SimpleDateFormat simpDate = new SimpleDateFormat(date);
+        String formats = simpDate.format(originaltimestamp);
+        
+        try{
+             query = "INSERT INTO tas.punch(terminalid, badgeid, originaltimestamp,"
+                     + "punchtypeid) VALUES('" + terminalid +
+                     "', '" + badgeid + "', '" + formats +
+                     "', '" + punchtypeid + "')";
+             
+             System.out.println(query);
+             prstSelect = conn.prepareStatement(query);
+             System.out.println("Executing query...");
+             hasResults = prstSelect.execute();
+             System.out.println("Punch has been inserted.");
+        }
+        catch(SQLException e){System.out.println(e);}
+        return -1;
+    }
+    
+    public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDateTime date){
+        ArrayList lists = new ArrayList();
+        GregorianCalendar gCal = new GregorianCalendar();
+        gCal.setTimeInMillis(date); //Might be wrong
+        java.util.Date datesTocheck = gCal.getTime();
+        
+        try{
+            query = "SELECT badgeid, terminalid, punchtypeid, originaltimestamp,"
+                    + "punchtypeid FROM tas.punch WHERE badgeid = '" +
+                    badge.getId() + "' AND originaltimestamp LIKE '%"
+                    + date + "%'";
+            
+            hasResults = prstSelect.execute();
+            while(hasResults || prstSelect.getUpdateCount() != -1){
+                if(hasResults){
+                    resultsSet = prstSelect.getResultSet();
+                    
+                    while(resultsSet.next()){
+                        int terminalid = resultsSet.getInt("terminalid");
+                        int punchtypeid = resultsSet.getInt("punchtypeid");
+                        
+                        
+                    }
+                }
+            }
+        }
     }
 }
