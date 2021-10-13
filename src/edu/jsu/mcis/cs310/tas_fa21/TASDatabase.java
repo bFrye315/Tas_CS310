@@ -2,8 +2,6 @@ package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.sql.*;
 import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -171,11 +169,8 @@ public class TASDatabase {
         SimpleDateFormat simpDate = new SimpleDateFormat(date);
         String formats = simpDate.format(originaltimestamp);
         
-        try{
-             query = "INSERT INTO tas.punch(terminalid, badgeid, originaltimestamp,"
-                     + "punchtypeid) VALUES('" + terminalid +
-                     "', '" + badgeid + "', '" + formats +
-                     "', '" + punchtypeid + "')";
+        try{ //Rework this
+             query = "";
              
              System.out.println(query);
              prstSelect = conn.prepareStatement(query);
@@ -188,30 +183,6 @@ public class TASDatabase {
     }
     
     public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDateTime date){
-        ArrayList lists = new ArrayList();
-        GregorianCalendar gCal = new GregorianCalendar();
-        gCal.setTimeInMillis(date); //Might be wrong
-        java.util.Date datesTocheck = gCal.getTime();
         
-        try{
-            query = "SELECT badgeid, terminalid, punchtypeid, originaltimestamp,"
-                    + "punchtypeid FROM tas.punch WHERE badgeid = '" +
-                    badge.getId() + "' AND originaltimestamp LIKE '%"
-                    + date + "%'";
-            
-            hasResults = prstSelect.execute();
-            while(hasResults || prstSelect.getUpdateCount() != -1){
-                if(hasResults){
-                    resultsSet = prstSelect.getResultSet();
-                    
-                    while(resultsSet.next()){
-                        int terminalid = resultsSet.getInt("terminalid");
-                        int punchtypeid = resultsSet.getInt("punchtypeid");
-                        
-                        
-                    }
-                }
-            }
-        }
     }
 }
