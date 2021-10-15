@@ -18,22 +18,22 @@ public class TASDatabase {
     public TASDatabase(){
         try{
             //This is used for to identify the server
-            String server = ("jdbc:mysql://localhost/tas"); //Might got this wrong, but its trial and error on the server part
+            String server = ("jdbc:mysql://localhost/tas_fa21_v1"); //Might got this wrong, but its trial and error on the server part
             String userName = "tasuser";
             String passWord = "bteam";
             
             //Load MySQL Driver
-            Class.forName("com.mysql.jdbc.Driver").newInstance(); //Similar to line 22 might got it wrong, but will change later
+            //Class.forName("com.mysql.jdbc.Driver").newInstance(); //Similar to line 22 might got it wrong, but will change later
             
             //Opens the connection
-            conn = DriverManager.getConnection(server, userName, passWord);
+            this.conn = DriverManager.getConnection(server, userName, passWord);
             
             if(!conn.isValid(0)){
                 throw new SQLException();
             }
         }
         catch(SQLException e){System.out.println("");}
-        catch(ClassNotFoundException e){System.out.println("");}
+        //catch(ClassNotFoundException e){System.out.println("");}
         catch(Exception e){}
     }
     
@@ -49,12 +49,13 @@ public class TASDatabase {
     }
     
     public Punch getPunch(int punchid){
-        Punch outputPunch;
+        Punch outputPunch = null;
         try{
             //Prepares the query
-            query = "SELECT * FROM tas.punch WHERE id = " + punchid;
+            query = "SELECT * FROM punch WHERE id = " + punchid;
 
             prstSelect = conn.prepareStatement(query);
+            
             
             //Executing the query
             hasResults = prstSelect.execute();
@@ -84,26 +85,26 @@ public class TASDatabase {
     }
     
     public Badge getBadge(String id){
-        Badge outputBadge;
+        Badge outputBadge = null;
         try{
-            query = "SELECT * FROM tas.badge WHERE id = \"" + id +
-                    "\"";
+            query = "SELECT * FROM badge WHERE id = ?";
             prstSelect = conn.prepareStatement(query);
+            prstSelect.setString(1, id);
             
             hasResults = prstSelect.execute();
             
-            while(hasResults || prstSelect.getUpdateCount() != -1){
-                if(hasResults){
-                    resultsSet = prstSelect.getResultSet();
-                    resultsSet.next();
+            if(hasResults){
+                
+                resultsSet = prstSelect.getResultSet();
+                resultsSet.next();
+
+                outputBadge = new Badge(resultsSet.getString("id"), resultsSet.getString("description"));
                     
-                    outputBadge = new Badge(resultsSet.getString("badgeID"), resultsSet.getString("badgeDescription"));
-                    return outputBadge;
-                }
             }
         }
-        catch(SQLException e){System.out.println("Error in getBadge");}
-        return null;
+        catch(Exception e) { e.printStackTrace(); }
+        return outputBadge;
+        
     }
     
     public Shift getShift(int shiftid) {
@@ -112,7 +113,7 @@ public class TASDatabase {
         
         try{
             
-            query = "SELECT * FROM tas.shift WHERE id = " + shiftid;
+            query = "SELECT * FROM shift WHERE id = " + shiftid;
             prstSelect = conn.prepareStatement(query);
             
             hasResults = prstSelect.execute();
@@ -162,7 +163,7 @@ public class TASDatabase {
         catch(SQLException e){System.out.println(e);}
         return null;
     }
-    
+  /**  
     //Feature 2 
     public int insertPunch(Punch p){
         int terminalid = p.getTerminalid();
@@ -213,5 +214,5 @@ public class TASDatabase {
         }
         catch (Exception e) { e.printStackTrace(); }
         
-    }
+    }*/
 }
