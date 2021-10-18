@@ -23,7 +23,7 @@ public class TASDatabase {
             String passWord = "bteam";
             
             //Load MySQL Driver
-            //Class.forName("com.mysql.jdbc.Driver").newInstance(); //Similar to line 22 might got it wrong, but will change later
+            Class.forName("com.mysql.jdbc.Driver").newInstance(); //Similar to line 22 might got it wrong, but will change later
             
             //Opens the connection
             this.conn = DriverManager.getConnection(server, userName, passWord);
@@ -33,7 +33,7 @@ public class TASDatabase {
             }
         }
         catch(SQLException e){System.out.println("");}
-        //catch(ClassNotFoundException e){System.out.println("");}
+        catch(ClassNotFoundException e){System.out.println("");}
         catch(Exception e){}
     }
     
@@ -52,36 +52,32 @@ public class TASDatabase {
         Punch outputPunch = null;
         try{
             //Prepares the query
-            query = "SELECT * FROM punch WHERE id = " + punchid;
+            query = "SELECT * FROM punch WHERE id = ?";
 
             prstSelect = conn.prepareStatement(query);
-            
+            prstSelect.setInt(1, punchid);
             
             //Executing the query
             hasResults = prstSelect.execute();
             
-            while(hasResults || prstSelect.getUpdateCount() != -1){
+            
                 if(hasResults){
                     resultsSet = prstSelect.getResultSet();
                     resultsSet.next();
                     
                     int terminalid = resultsSet.getInt("terminalId");
-                    String badge = resultsSet.getString("badgeid");
-                    Timestamp originaltimestamp = resultsSet.getTimestamp("originaltimestamp");
+                    String badgeid = resultsSet.getString("badgeid");
+                    Timestamp timestamp = resultsSet.getTimestamp("originaltimestamp");
+                    LocalDateTime localstamp = timestamp.toLocalDateTime();
                     int punchtypeid = resultsSet.getInt("punchTypeId");
                     
-
-                    outputPunch = new Punch(resultsSet.getInt("terminalId"), getBadge("badgeid"), 
-                            resultsSet.getInt("punchTypeId"));
-
-                    outputPunch.setOriginaltimestamp(originaltimestamp);
-                    
-                    return outputPunch;
+                    outputPunch = new Punch(terminalid, getBadge(badgeid), punchtypeid, localstamp);
+     
                 }
-            }
+            
         }
-        catch(SQLException e){System.out.println(e);}
-        return null;
+        catch(Exception e){e.printStackTrace();}
+        return outputPunch;
     }
     
     public Badge getBadge(String id){
