@@ -150,7 +150,12 @@ public class Shift {
     
     @Override
     public String toString(){
-        return getDescription() + ": " + start + " - " + stop + "(" + shiftduration + " minutes); Lunch:" + lunchstart
-                + " - " + lunchstop + "(" + lunchduration + " minutes)";
+        //"Shift 1: 07:00 - 15:30 (510 minutes); Lunch: 12:00 - 12:30 (30 minutes)"
+        StringBuilder s = new StringBuilder();
+        s.append('#').append(shiftid).append(" (").append(description).append(')');
+        return s.toString();
+        
+        /*return getDescription() + ": " + start + " - " + stop + "(" + shiftduration + " minutes); Lunch:" + lunchstart
+                + " - " + lunchstop + "(" + lunchduration + " minutes)";*/
     }
 }
