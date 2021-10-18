@@ -109,7 +109,7 @@ public class TASDatabase {
         
         try{
             
-            query = "SELECT * FROM shift WHERE id = " + shiftid;
+            query = "SELECT * FROM shift WHERE id = ?";
             prstSelect = conn.prepareStatement(query);
             prstSelect.setInt(1, shiftid);
             
