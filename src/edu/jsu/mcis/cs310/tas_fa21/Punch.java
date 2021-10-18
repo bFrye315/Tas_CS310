@@ -45,11 +45,12 @@ public class Punch {
     }
     
     public String printOriginal(){//"#D2C39273 CLOCK IN: WED 09/05/2018 07:00:07"
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("E LL/dd/uuuu HH:mm:ss");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("LL/dd/uuuu HH:mm:ss");
         StringBuilder s = new StringBuilder();
-        s.append("#").append(badgeid).append(" ").append(punchtypeid).append(": ").append(originaltimestamp.format(format));
-                //append(" ").append(originaltimestamp.getMonthValue()).append("/").append(originaltimestamp.getDayOfMonth()).
-                //append("/").append(originaltimestamp.getYear()).append(" ").append(originaltimestamp.getHour()).append(originaltimestamp.for));
+        s.append("#").append(badgeid).append(" ").append(punchtypeid).append(": ").
+                append(originaltimestamp.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase()).
+                append(" ").append(originaltimestamp.format(format));
+                
         return s.toString();
     }
     
