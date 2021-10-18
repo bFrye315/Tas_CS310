@@ -2,6 +2,8 @@ package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 public class Punch {
     
@@ -43,7 +45,7 @@ public class Punch {
     }
     
     public String printOriginal(){//"#D2C39273 CLOCK IN: WED 09/05/2018 07:00:07"
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("EEE LL/dd/uuuu HH:mm:ss");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("E LL/dd/uuuu HH:mm:ss");
         StringBuilder s = new StringBuilder();
         s.append("#").append(badgeid).append(" ").append(punchtypeid).append(": ").append(originaltimestamp.format(format));
                 //append(" ").append(originaltimestamp.getMonthValue()).append("/").append(originaltimestamp.getDayOfMonth()).
