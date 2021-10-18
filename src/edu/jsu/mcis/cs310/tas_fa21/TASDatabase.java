@@ -115,25 +115,25 @@ public class TASDatabase {
             
             hasResults = prstSelect.execute();
             
-                if(hasResults){
-                    resultsSet = prstSelect.getResultSet();
-                    resultsSet.next();
+            if(hasResults){
+                resultsSet = prstSelect.getResultSet();
+                resultsSet.next();
                     
-                    ShiftParameters params = new ShiftParameters();
+                ShiftParameters params = new ShiftParameters();
                     
-                    params.setDescription(resultsSet.getString("description"));
-                    params.setStart(LocalTime.parse(resultsSet.getString("start")));
-                    params.setStop(LocalTime.parse(resultsSet.getString("stop")));
-                    params.setInterval(resultsSet.getInt("interval"));
-                    params.setGraceperiod(resultsSet.getInt("graceperiod"));
-                    params.setDock(resultsSet.getInt("dock"));
-                    params.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
-                    params.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
-                    params.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
-                    params.setId(shiftid);
+                params.setDescription(resultsSet.getString("description"));
+                params.setStart(LocalTime.parse(resultsSet.getString("start")));
+                params.setStop(LocalTime.parse(resultsSet.getString("stop")));
+                params.setInterval(resultsSet.getInt("interval"));
+                params.setGraceperiod(resultsSet.getInt("graceperiod"));
+                params.setDock(resultsSet.getInt("dock"));
+                params.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
+                params.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
+                params.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
+                params.setId(shiftid);
                     
-                    outputShift = new Shift(params);
-                }
+                outputShift = new Shift(params);
+            }
         }
         catch(Exception e){e.printStackTrace();}
         
