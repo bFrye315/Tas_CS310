@@ -111,10 +111,10 @@ public class TASDatabase {
             
             query = "SELECT * FROM shift WHERE id = " + shiftid;
             prstSelect = conn.prepareStatement(query);
+            prstSelect.setInt(1, shiftid);
             
             hasResults = prstSelect.execute();
             
-            while(hasResults || prstSelect.getUpdateCount() != -1){
                 if(hasResults){
                     resultsSet = prstSelect.getResultSet();
                     resultsSet.next();
@@ -133,11 +133,9 @@ public class TASDatabase {
                     params.setId(shiftid);
                     
                     outputShift = new Shift(params);
-                    
                 }
-            }
         }
-        catch(SQLException e){System.out.println(e);}
+        catch(Exception e){e.printStackTrace();}
         
         return outputShift;
         
