@@ -35,6 +35,20 @@ public class Shift {
     private LocalTime lunchstop;
     
     public Shift(ShiftParameters params) {
+        this.description = params.getDescription();
+    
+        this.interval = params.getInterval();
+        this.graceperiod = params.getGraceperiod();
+        this.dock = params.getDock();
+        this.lunchdeduct = params.getLunchdeduct();
+ 
+    
+        this.start = params.getStart(); // can we use localtime
+        this.stop = params.getStop();
+        this.lunchstart = params.getLunchstart(); // or is localdatetime better?
+        this.lunchstop = params.getLunchstop();
+        this.shiftid = params.getId();
+        this.
         setShiftduration(params.getStart(), params.getStart());
         setLunchduration(params.getLunchstart(), params.getLunchstop());
     }
