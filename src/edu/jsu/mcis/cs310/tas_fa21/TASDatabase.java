@@ -193,7 +193,7 @@ public class TASDatabase {
         
         return outputShift;
     }
-  /**  
+    
     //Feature 2 
     public int insertPunch(Punch p){
         int terminalid = p.getTerminalid();
@@ -221,28 +221,30 @@ public class TASDatabase {
     }
     
     public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDateTime date){
-        
+        String badgeid = badge.getId();
+        Timestamp datets = Timestamp.valueOf(date);
+        ArrayList alist = new ArrayList();
         try {
-            query = "SELECT badgeid, terminalid, punchtypeid, originaltimestamp,"
-                    + "punchtypeid FROM tas.punch WHERE badgeid = '" +
-                    badge.getId() + "' AND originaltimestamp LIKE '%"
-                    + date + "%'";
+            query = "SELECT * FROM punch WHERE badgeid = ? AND ?";
+            prstSelect = conn.prepareStatement(query);
+            prstSelect.setString(1, badgeid);
+            prstSelect.setTimestamp(2, datets);
             
             hasResults = prstSelect.execute();
+            
+            
             while(hasResults || prstSelect.getUpdateCount() != -1){
+                Punch punches = null;
                 if(hasResults){
                     resultsSet = prstSelect.getResultSet();
                     
-                    while(resultsSet.next()){
-                        int terminalid = resultsSet.getInt("terminalid");
-                        int punchtypeid = resultsSet.getInt("punchtypeid");
-                        
-                        
-                    }
+                    punches = getPunch(resultsSet.getInt("punchid"));
                 }
+                alist.add(punches);
             }
         }
         catch (Exception e) { e.printStackTrace(); }
-        
-    }*/
+    return alist;    
+    }
+    
 }
