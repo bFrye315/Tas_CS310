@@ -1,10 +1,13 @@
 package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.sql.*;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 //Feature 1
 public class TASDatabase {
@@ -13,7 +16,7 @@ public class TASDatabase {
     private PreparedStatement prstSelect = null, prstUpdate = null;
     private ResultSet resultsSet = null;
     private boolean hasResults;
-    private int currentCount;
+    private int updateCount; 
     
     public TASDatabase(){
         try{
@@ -196,29 +199,44 @@ public class TASDatabase {
     
     //Feature 2 
     public int insertPunch(Punch p){
-        int terminalid = p.getTerminalid();
-        String badgeid = p.getBadgeid();
-        LocalDateTime originaltimestamps = p.getOriginaltimestamp();
-        PunchType punchtypeid = p.getPunchtypeid();
-        
-        //This part will convert from TimeStamp to String
-        Timestamp originaltimestamp = new Timestamp(originaltimestamps);
-        String date = "YYYY-MM-DD";
-        SimpleDateFormat simpDate = new SimpleDateFormat(date);
-        String formats = simpDate.format(originaltimestamp);
-        
-        try{ //Rework this
-             query = "";
+            
+            int results = 0;
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+           
+          LocalDateTime originalTime = p.getOriginaltimestamp();
+          String otsString = originalTime.format(dtf);
+          System.err.println("New Punch Timestamp (from insertPunch(): " + otsString);
+          String badgeid = p.getBadgeid(); 
+          int terminalid = p.getTerminalid(); 
+          PunchType punchtypeid = p.getPunchtypeid(); 
+          
+
+         try{
+             query = "INSERT INTO tas_fa21_v1.punch (terminalid, badgeid, originaltimestamp, punchtypeid) VALUES (?, ?, ?, ?)"; 
+             prstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS); 
              
-             System.out.println(query);
-             prstSelect = conn.prepareStatement(query);
-             System.out.println("Executing query...");
-             hasResults = prstSelect.execute();
-             System.out.println("Punch has been inserted.");
-        }
-        catch(SQLException e){System.out.println(e);}
-        return -1;
+             prstUpdate.setInt(1, terminalid);
+             prstUpdate.setString(2, badgeid.getBadgeid());
+             prstUpdate.setString(3, otsString);
+             prstUpdate.setInt(4, punchtypeid.ordinal());
+             
+             updateCount = prstUpdate.executeUpdate();
+             
+             if(updateCount > 0){
+                 
+                 ResultSet resultset = prstUpdate.getGeneratedKeys(); 
+                 
+                 if (resultset.next()){
+                     results = resultset.getInt(1);
+                 }
+             }
+                
+         }
+         catch(SQLException e){ System.out.println(e);}
+         System.err.println("New Punch ID: " + results);
+         return results;    
     }
+    // my 
     
     public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDateTime date){
         String badgeid = badge.getId();
