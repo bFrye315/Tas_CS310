@@ -47,7 +47,7 @@ public class Shift {
         this.lunchstop = params.getLunchstop();
         this.shiftid = params.getId();
         this.
-        setShiftduration(params.getStart(), params.getStart());
+        setShiftduration(params.getStart(), params.getStop());
         setLunchduration(params.getLunchstart(), params.getLunchstop());
     }
      public Shift(Badge badgeid){
@@ -139,25 +139,17 @@ public class Shift {
     }
     
     private void setShiftduration(LocalTime start, LocalTime stop){
-        int startmin = (start.getHour() * MINPERHOUR) + start.getMinute();
-        int stopmin = (stop.getHour() * MINPERHOUR) + stop.getMinute();
-        if(start.isBefore(stop)){
-            this.shiftduration = stopmin - startmin;
-        }
-        else{
-            this.shiftduration = (MAXDAILYMIN - startmin) + stopmin;
-        }
+        int startmin = start.getHour() * MINPERHOUR + start.getMinute();
+        int stopmin = stop.getHour() * MINPERHOUR + stop.getMinute();
+      
+        this.shiftduration = stopmin - startmin; 
     }
     
     private void setLunchduration(LocalTime lunchstart, LocalTime lunchstop){
         int startmin = (lunchstart.getHour() * MINPERHOUR) + lunchstart.getMinute();
         int stopmin = (lunchstop.getHour() * MINPERHOUR) + lunchstop.getMinute();
-        if(lunchstart.isBefore(lunchstop)){
-            this.lunchduration = stopmin - startmin;
-        }
-        else{
-            this.lunchduration = (MAXDAILYMIN - startmin) + stopmin;
-        }  
+       
+        this.lunchduration = stopmin - startmin;      
     }
     
     @Override
@@ -169,7 +161,6 @@ public class Shift {
                 .append(lunchstop).append(" (").append(lunchduration).append(" minutes)");
         return s.toString();
         
-        /*return getDescription() + ": " + start + " - " + stop + "(" + shiftduration + " minutes); Lunch:" + lunchstart
-                + " - " + lunchstop + "(" + lunchduration + " minutes)";*/
+        
     }
 }
