@@ -141,12 +141,13 @@ public class TASDatabase {
         
     }
     
-    public Shift getShift(Badge badge){ //For James: Okay so basically this is exactly similar to the previous line of code so the blueprint is there for you
+    public Shift getShift(Badge badge){ 
         Shift outputShift = null;
         try{
             
-            query = "SELECT * FROM shift WHERE shiftid = (SELECT shiftid FROM employee WHERE badgeid = " + badge.getId() + ")";
+            query = "SELECT * FROM shift WHERE shiftid = (SELECT shiftid FROM employee WHERE badgeid = ?";
             prstSelect = conn.prepareStatement(query);
+            //prstSelect.setInt(1, id);
             
             hasResults = prstSelect.execute();
            
