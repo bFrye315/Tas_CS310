@@ -141,13 +141,14 @@ public class TASDatabase {
         
     }
     
-    public Shift getShift(Badge badge){ 
+    public Shift getShift(int shiftid, String id){ 
         Shift outputShift = null;
         try{
             
-            query = "SELECT * FROM shift WHERE shiftid = (SELECT shiftid FROM employee WHERE badgeid = ?";
+            query = "SELECT * FROM shift WHERE shiftid = SELECT shiftid FROM employee WHERE badgeid = ?";
             prstSelect = conn.prepareStatement(query);
-            //prstSelect.setInt(1, id);
+            prstSelect.setString(1, id);
+            prstSelect.setInt(1, shiftid);
             
             hasResults = prstSelect.execute();
            
