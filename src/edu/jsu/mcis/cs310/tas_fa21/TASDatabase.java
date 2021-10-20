@@ -141,20 +141,56 @@ public class TASDatabase {
         
     }
     
-    public Shift getShift(int shiftid, String id){ 
+    public Shift getShift(Badge badge){ 
+        int shiftid = 0;
         Shift outputShift = null;
+        String badgeid = badge.getId();
         try{
             
-            query = "SELECT * FROM shift WHERE shiftid = SELECT shiftid FROM employee WHERE badgeid = ?";
+            query = "SELECT * FROM employee WHERE badgeid = ?";
             prstSelect = conn.prepareStatement(query);
-            prstSelect.setString(1, id);
+            prstSelect.setString(1, badgeid);
+            
+            hasResults = prstSelect.execute();
+            if(hasResults){
+                resultsSet = prstSelect.getResultSet();
+                resultsSet.next();
+                
+                shiftid = resultsSet.getInt("shiftid");
+            }
+        }
+        catch(Exception e) { e.printStackTrace(); }
+        
+        try{
+            
+            query = "SELECT * FROM shift WHERE id = ?";
+            prstSelect = conn.prepareStatement(query);
             prstSelect.setInt(1, shiftid);
             
             hasResults = prstSelect.execute();
-           
+            if(hasResults){
+                resultsSet = prstSelect.getResultSet();
+                resultsSet.next();
+                
+                      
+                ShiftParameters params = new ShiftParameters();
+                    
+                params.setDescription(resultsSet.getString("description"));
+                params.setStart(LocalTime.parse(resultsSet.getString("start")));
+                params.setStop(LocalTime.parse(resultsSet.getString("stop")));
+                params.setInterval(resultsSet.getInt("interval"));
+                params.setGraceperiod(resultsSet.getInt("graceperiod"));
+                params.setDock(resultsSet.getInt("dock"));
+                params.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
+                params.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
+                params.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
+                params.setId(shiftid);
+                    
+                outputShift = new Shift(params);
             }
-        
+        }
         catch(Exception e) { e.printStackTrace(); }
+        
         return outputShift;
     }
   /**  
