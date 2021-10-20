@@ -164,9 +164,9 @@ public class Shift {
     public String toString(){
         //"Shift 1: 07:00 - 15:30 (510 minutes); Lunch: 12:00 - 12:30 (30 minutes)"
         StringBuilder s = new StringBuilder();
-        s.append("#").append(shiftid).append(" ").append(description).append(" ").append(start).append(" ").append(stop).append(" ")
-                .append(shiftduration).append(" ").append(lunchstart).append(" ").append(lunchstop).append(" ").append(lunchduration)
-                .append(".");
+        s.append(description).append(": ").append(start).append(" - ").append(stop).append(" (")
+                .append(shiftduration).append(" minutes); Lunch: ").append(lunchstart).append(" - ")
+                .append(lunchstop).append(" (").append(lunchduration).append(" minutes)");
         return s.toString();
         
         /*return getDescription() + ": " + start + " - " + stop + "(" + shiftduration + " minutes); Lunch:" + lunchstart
