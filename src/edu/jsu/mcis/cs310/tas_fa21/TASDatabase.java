@@ -1,6 +1,7 @@
 package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.sql.*;
+import java.time.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -11,9 +12,7 @@ public class TASDatabase {
     private Connection conn = null;
     private String query;
     private PreparedStatement prstSelect = null, prstUpdate = null;
-    private ResultSet resultsSet = null;
-    private boolean hasResults;
-    private int currentCount;
+    private int currentCount, resultsCount;
     
     public TASDatabase(){
         try{
@@ -23,7 +22,7 @@ public class TASDatabase {
             String passWord = "bteam";
             
             //Load MySQL Driver
-            Class.forName("com.mysql.jdbc.Driver").newInstance(); //Similar to line 22 might got it wrong, but will change later
+            //Class.forName("com.mysql.jdbc.Driver").newInstance(); //Similar to line 22 might got it wrong, but will change later
             
             //Opens the connection
             this.conn = DriverManager.getConnection(server, userName, passWord);
@@ -33,7 +32,7 @@ public class TASDatabase {
             }
         }
         catch(SQLException e){System.out.println("");}
-        catch(ClassNotFoundException e){System.out.println("");}
+        //catch(ClassNotFoundException e){System.out.println("");}
         catch(Exception e){}
     }
     
@@ -43,7 +42,6 @@ public class TASDatabase {
         }
         catch(SQLException e){}
         finally{
-            if(resultsSet != null){try{resultsSet.close(); resultsSet = null;} catch(SQLException e){}}
             if(prstSelect != null){try{prstSelect.close(); prstSelect = null;} catch(SQLException e){}}
         }
     }
@@ -58,11 +56,11 @@ public class TASDatabase {
             prstSelect.setInt(1, punchid);
             
             //Executing the query
-            hasResults = prstSelect.execute();
+            boolean hasResults = prstSelect.execute();
             
             
                 if(hasResults){
-                    resultsSet = prstSelect.getResultSet();
+                    ResultSet resultsSet = prstSelect.getResultSet();
                     resultsSet.next();
                     
                     int terminalid = resultsSet.getInt("terminalId");
@@ -87,11 +85,11 @@ public class TASDatabase {
             prstSelect = conn.prepareStatement(query);
             prstSelect.setString(1, id);
             
-            hasResults = prstSelect.execute();
+            boolean hasResults = prstSelect.execute();
             
             if(hasResults){
                 
-                resultsSet = prstSelect.getResultSet();
+                ResultSet resultsSet = prstSelect.getResultSet();
                 resultsSet.next();
 
                 outputBadge = new Badge(resultsSet.getString("id"), resultsSet.getString("description"));
@@ -113,10 +111,10 @@ public class TASDatabase {
             prstSelect = conn.prepareStatement(query);
             prstSelect.setInt(1, shiftid);
             
-            hasResults = prstSelect.execute();
+            boolean hasResults = prstSelect.execute();
             
             if(hasResults){
-                resultsSet = prstSelect.getResultSet();
+                ResultSet resultsSet = prstSelect.getResultSet();
                 resultsSet.next();
                     
                 ShiftParameters params = new ShiftParameters();
@@ -151,9 +149,9 @@ public class TASDatabase {
             prstSelect = conn.prepareStatement(query);
             prstSelect.setString(1, badgeid);
             
-            hasResults = prstSelect.execute();
+            boolean hasResults = prstSelect.execute();
             if(hasResults){
-                resultsSet = prstSelect.getResultSet();
+                ResultSet resultsSet = prstSelect.getResultSet();
                 resultsSet.next();
                 
                 shiftid = resultsSet.getInt("shiftid");
@@ -167,9 +165,9 @@ public class TASDatabase {
             prstSelect = conn.prepareStatement(query);
             prstSelect.setInt(1, shiftid);
             
-            hasResults = prstSelect.execute();
+            boolean hasResults = prstSelect.execute();
             if(hasResults){
-                resultsSet = prstSelect.getResultSet();
+                ResultSet resultsSet = prstSelect.getResultSet();
                 resultsSet.next();
                 
                       
@@ -195,7 +193,7 @@ public class TASDatabase {
     }
     
     //Feature 2 
-    public int insertPunch(Punch p){
+   /** public int insertPunch(Punch p){
         int terminalid = p.getTerminalid();
         String badgeid = p.getBadgeid();
         LocalDateTime originaltimestamps = p.getOriginaltimestamp();
@@ -219,32 +217,44 @@ public class TASDatabase {
         catch(SQLException e){System.out.println(e);}
         return -1;
     }
-    
-    public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDateTime date){
-        String badgeid = badge.getId();
-        Timestamp datets = Timestamp.valueOf(date);
-        ArrayList alist = new ArrayList();
+    */
+    public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDate date){
+        
+        ArrayList<Punch> alist = null;
+        
         try {
-            query = "SELECT * FROM punch WHERE badgeid = ? AND ?";
+            query = "SELECT * FROM punch WHERE badgeid=? AND DATE(originaltimestamp)=?";
             prstSelect = conn.prepareStatement(query);
-            prstSelect.setString(1, badgeid);
-            prstSelect.setTimestamp(2, datets);
+            prstSelect.setString(1, badge.getId());
+            prstSelect.setDate(2, java.sql.Date.valueOf(date));
             
-            hasResults = prstSelect.execute();
+            boolean hasResults = prstSelect.execute();
             
             
-            while(hasResults || prstSelect.getUpdateCount() != -1){
-                Punch punches = null;
-                if(hasResults){
-                    resultsSet = prstSelect.getResultSet();
+            if(hasResults){
+                
+                alist = new ArrayList<>();
+                
+                ResultSet resultsSet = prstSelect.getResultSet();
+
+                while(resultsSet.next()) {
+
+                    int terminalid = resultsSet.getInt("terminalid");
+                    String badgeid = resultsSet.getString("badgeid");
+                    LocalDateTime originaltimestamp = resultsSet.getTimestamp("originaltimestamp").toLocalDateTime();
+                    int punchtypeid = resultsSet.getInt("punchTypeId");
+
+                    Punch punch = new Punch(terminalid, getBadge(badgeid), punchtypeid, originaltimestamp);
+                    alist.add(punch);
                     
-                    punches = getPunch(resultsSet.getInt("punchid"));
                 }
-                alist.add(punches);
             }
+                  
         }
         catch (Exception e) { e.printStackTrace(); }
-    return alist;    
+        
+        return alist;   
+        
     }
     
 }
