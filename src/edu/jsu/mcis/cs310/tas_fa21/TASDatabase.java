@@ -236,7 +236,7 @@ public class TASDatabase {
          System.err.println("New Punch ID: " + results);
          return results;    
     }
-    */
+    
     public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDate date){
         
         ArrayList<Punch> alist = null;
