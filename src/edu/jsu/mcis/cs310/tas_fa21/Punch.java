@@ -13,6 +13,16 @@ public class Punch {
     private LocalDateTime originaltimestamp;
 
     
+    public Punch(int terminalid, Badge badge, int punchtypeid){
+        this.terminalid = terminalid;
+        this.badgeid = badge.getId();
+        this.punchtypeid = PunchType.values()[punchtypeid];
+    }
+
+    public void setOriginaltimestamp(LocalDateTime originaltimestamp) {
+        this.originaltimestamp = originaltimestamp;
+    }
+    
     public Punch(int terminalid, Badge badge, int punchtypeid, LocalDateTime originaltimestamp){
     this.terminalid = terminalid;
     this.badgeid = badge.getId();
