@@ -17,7 +17,7 @@ public class TASDatabase {
     private Connection conn = null;
     private String query;
     private PreparedStatement prstSelect = null, prstUpdate = null;
-    private int currentCount, resultsCount;
+    private int updateCount;
     
     public TASDatabase(){
         try{
@@ -216,7 +216,7 @@ public class TASDatabase {
              prstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS); 
              
              prstUpdate.setInt(1, terminalid);
-             prstUpdate.setString(2, badgeid.getBadgeid());
+             prstUpdate.setString(2, badgeid);
              prstUpdate.setString(3, otsString);
              prstUpdate.setInt(4, punchtypeid.ordinal());
              
@@ -236,7 +236,6 @@ public class TASDatabase {
          System.err.println("New Punch ID: " + results);
          return results;    
     }
-    // my 
     
     public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDate date){
         
