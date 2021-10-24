@@ -9,13 +9,13 @@ Date: 10/1/21
  */
 package edu.jsu.mcis.cs310.tas_fa21;
 
-//import java.util.*;
-import java.time.*;
-//import java.sql.*;
 
+import java.time.*;
+
+// in shift I removed the original constructor that was just commented out as well as imports that were unused
 public class Shift {
     private final int MINPERHOUR = 60;
-    private final int MAXDAILYMIN = 1440;
+
     
     private String description;
     
@@ -27,9 +27,9 @@ public class Shift {
     private int lunchduration;
     private int shiftduration; 
     
-    private LocalTime start; // can we use localtime
+    private LocalTime start;
     private LocalTime stop;
-    private LocalTime lunchstart; // or is localdatetime better?
+    private LocalTime lunchstart; 
     private LocalTime lunchstop;
     
     public Shift(ShiftParameters params) {
@@ -41,9 +41,9 @@ public class Shift {
         this.lunchdeduct = params.getLunchdeduct();
  
     
-        this.start = params.getStart(); // can we use localtime
+        this.start = params.getStart();
         this.stop = params.getStop();
-        this.lunchstart = params.getLunchstart(); // or is localdatetime better?
+        this.lunchstart = params.getLunchstart();
         this.lunchstop = params.getLunchstop();
         this.shiftid = params.getId();
         this.
@@ -53,18 +53,7 @@ public class Shift {
      public Shift(Badge badgeid){
          
      }
-    /**public Shift(int shiftid, String description, LocalTime start, LocalTime stop, LocalTime lunchstart, LocalTime lunchstop){
-        // incomplete argument list
-        this.shiftid = shiftid;
-        this.description = description;
-        this.start = start;
-        this.stop = stop;
-        this.lunchstart = lunchstart;
-        this.lunchstop = lunchstop;
-        setShiftduration(start, stop);
-        setLunchduration(lunchstart, lunchstop);
-        
-    }*/
+
      
     public String getDescription() {
         return description;
