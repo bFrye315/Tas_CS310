@@ -8,15 +8,21 @@ import java.util.Locale;
 public class Punch {
     
     private int terminalid;
-    private String badgeid;
-    private PunchType punchtypeid;
+    private Badge badge;
+    private PunchType punchtype;
     private LocalDateTime originaltimestamp;
 
+    // the 3 param constructor now sets the originaltimestamp to the current
+    // time when it is made, the setOriginaltimestamp method can still change it
+    // after the fact, as seen in the getPunch method in TASDatabase, but i figured 
+    // that that's what was needed after looking at how the test for feature 2 was
+    // written. thats the part im not sure of
     
     public Punch(int terminalid, Badge badge, int punchtypeid){
         this.terminalid = terminalid;
-        this.badgeid = badge.getId();
-        this.punchtypeid = PunchType.values()[punchtypeid];
+        this.badge = badge;
+        this.punchtype = PunchType.values()[punchtypeid];
+        this.originaltimestamp = LocalDateTime.now().withSecond(0).withNano(0);
     }
 
     public void setOriginaltimestamp(LocalDateTime originaltimestamp) {
@@ -25,8 +31,8 @@ public class Punch {
     
     public Punch(int terminalid, Badge badge, int punchtypeid, LocalDateTime originaltimestamp){
     this.terminalid = terminalid;
-    this.badgeid = badge.getId();
-    this.punchtypeid = PunchType.values()[punchtypeid];
+    this.badge = badge;
+    this.punchtype = PunchType.values()[punchtypeid];
     this.originaltimestamp = originaltimestamp;
     }
     
@@ -38,12 +44,12 @@ public class Punch {
         return terminalid;
     }
 
-    public String getBadgeid() {
-        return badgeid;
+    public Badge getBadge() {
+        return badge;
     }
 
-    public PunchType getPunchtypeid() {
-        return punchtypeid;
+    public PunchType getPunchtype() {
+        return punchtype;
     }
 
     public LocalDateTime getOriginaltimestamp() {
@@ -57,7 +63,7 @@ public class Punch {
     public String printOriginal(){//"#D2C39273 CLOCK IN: WED 09/05/2018 07:00:07"
         DateTimeFormatter format = DateTimeFormatter.ofPattern("LL/dd/uuuu HH:mm:ss");
         StringBuilder s = new StringBuilder();
-        s.append("#").append(badgeid).append(" ").append(punchtypeid).append(": ").
+        s.append("#").append(badge.getId()).append(" ").append(punchtype).append(": ").
                 append(originaltimestamp.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase()).
                 append(" ").append(originaltimestamp.format(format));
                 
