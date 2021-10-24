@@ -68,13 +68,16 @@ public class TASDatabase {
                     ResultSet resultsSet = prstSelect.getResultSet();
                     resultsSet.next();
                     
+                    // using the new 3 param punch constructor and a setOriginaltimestamp now
+                    
                     int terminalid = resultsSet.getInt("terminalId");
                     String badgeid = resultsSet.getString("badgeid");
                     Timestamp timestamp = resultsSet.getTimestamp("originaltimestamp");
                     LocalDateTime localstamp = timestamp.toLocalDateTime();
                     int punchtypeid = resultsSet.getInt("punchTypeId");
                     
-                    outputPunch = new Punch(terminalid, getBadge(badgeid), punchtypeid, localstamp);
+                    outputPunch = new Punch(terminalid, getBadge(badgeid), punchtypeid);
+                    outputPunch.setOriginaltimestamp(localstamp);
      
                 }
             
@@ -145,30 +148,13 @@ public class TASDatabase {
     }
     
     public Shift getShift(Badge badge){ 
-        int shiftid = 0;
         Shift outputShift = null;
-        String badgeid = badge.getId();
-        try{
+        try{ // reverted this back to the original query for the most part, 
+            //but changed a few things so it would still work as needed
             
-            query = "SELECT * FROM employee WHERE badgeid = ?";
+            query = "SELECT * FROM shift WHERE id = (SELECT shiftid FROM employee WHERE badgeid = ?)";
             prstSelect = conn.prepareStatement(query);
-            prstSelect.setString(1, badgeid);
-            
-            boolean hasResults = prstSelect.execute();
-            if(hasResults){
-                ResultSet resultsSet = prstSelect.getResultSet();
-                resultsSet.next();
-                
-                shiftid = resultsSet.getInt("shiftid");
-            }
-        }
-        catch(Exception e) { e.printStackTrace(); }
-        
-        try{
-            
-            query = "SELECT * FROM shift WHERE id = ?";
-            prstSelect = conn.prepareStatement(query);
-            prstSelect.setInt(1, shiftid);
+            prstSelect.setString(1, badge.getId());
             
             boolean hasResults = prstSelect.execute();
             if(hasResults){
@@ -187,7 +173,7 @@ public class TASDatabase {
                 params.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
                 params.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
                 params.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
-                params.setId(shiftid);
+                params.setId(resultsSet.getInt("id"));
                     
                 outputShift = new Shift(params);
             }
@@ -202,13 +188,19 @@ public class TASDatabase {
             
             int results = 0;
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-           
-          LocalDateTime originalTime = p.getOriginaltimestamp();
-          String otsString = originalTime.format(dtf);
-          System.err.println("New Punch Timestamp (from insertPunch(): " + otsString);
-          String badgeid = p.getBadgeid(); 
-          int terminalid = p.getTerminalid(); 
-          PunchType punchtypeid = p.getPunchtypeid(); 
+            
+            // using a localdatetime and timestamp conversion since timestamps are what
+            // is stored in the database
+            LocalDateTime time = p.getOriginaltimestamp();
+            
+            Timestamp ts = Timestamp.valueOf(time);
+            
+            //LocalDateTime originalTime = p.getOriginaltimestamp();
+            //String otsString = originalTime.format(dtf);
+            //System.err.println("New Punch Timestamp (from insertPunch(): " + otsString);
+            String badgeid = p.getBadge().getId(); 
+            int terminalid = p.getTerminalid(); 
+            PunchType punchtypeid = p.getPunchtype(); 
           
 
          try{
@@ -217,7 +209,7 @@ public class TASDatabase {
              
              prstUpdate.setInt(1, terminalid);
              prstUpdate.setString(2, badgeid);
-             prstUpdate.setString(3, otsString);
+             prstUpdate.setTimestamp(3, ts); // this is now a set to timestamp instead of a string
              prstUpdate.setInt(4, punchtypeid.ordinal());
              
              updateCount = prstUpdate.executeUpdate();
@@ -232,8 +224,8 @@ public class TASDatabase {
              }
                 
          }
-         catch(SQLException e){ System.out.println(e);}
-         System.err.println("New Punch ID: " + results);
+         catch(Exception e){ e.printStackTrace();} // changed these to output differently and just print the full stack
+         //System.err.println("New Punch ID: " + results);
          return results;    
     }
     
