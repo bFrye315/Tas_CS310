@@ -60,7 +60,7 @@ public class TASDatabase {
                     ResultSet resultsSet = prstSelect.getResultSet();
                     resultsSet.next();
                     
-                    // using the new 3 param punch constructor and a setOriginaltimestamp now
+                  
                     
                     int terminalid = resultsSet.getInt("terminalId");
                     String badgeid = resultsSet.getString("badgeid");
