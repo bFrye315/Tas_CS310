@@ -70,4 +70,9 @@ public class Punch {
         return s.toString();
     }
     
+    //Feature 3
+    public void adjust(Shift s){
+        
+    }
+    
 }
