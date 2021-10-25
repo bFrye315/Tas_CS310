@@ -71,8 +71,8 @@ public class TASDatabase {
                     LocalDateTime localstamp = timestamp.toLocalDateTime();
                     int punchtypeid = resultsSet.getInt("punchTypeId");
                     
-                    outputPunch = new Punch(terminalid, getBadge(badgeid), punchtypeid);
-                    outputPunch.setOriginaltimestamp(localstamp);
+                    outputPunch = new Punch(terminalid, getBadge(badgeid), punchtypeid, localstamp);
+                    
      
                 }
             
@@ -182,13 +182,13 @@ public class TASDatabase {
     public int insertPunch(Punch p){
             
             int results = 0;
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            
             
             // using a localdatetime and timestamp conversion since timestamps are what
             // is stored in the database
             LocalDateTime time = p.getOriginaltimestamp();
             
-            Timestamp ts = Timestamp.valueOf(time);
+            
             
             String badgeid = p.getBadge().getId(); 
             int terminalid = p.getTerminalid(); 
@@ -201,7 +201,7 @@ public class TASDatabase {
              
              prstUpdate.setInt(1, terminalid);
              prstUpdate.setString(2, badgeid);
-             prstUpdate.setTimestamp(3, ts); // this is now a set to timestamp instead of a string
+             prstUpdate.setTimestamp(3, java.sql.Timestamp.valueOf(time)); // this is now a set to timestamp instead of a string
              prstUpdate.setInt(4, punchtypeid.ordinal());
              
              updateCount = prstUpdate.executeUpdate();
