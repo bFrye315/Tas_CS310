@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 
 //Feature 1
 public class TASDatabase {
@@ -22,12 +21,9 @@ public class TASDatabase {
     public TASDatabase(){
         try{
             //This is used for to identify the server
-            String server = ("jdbc:mysql://localhost/tas_fa21_v1"); //Might got this wrong, but its trial and error on the server part
+            String server = ("jdbc:mysql://localhost/tas_fa21_v1");
             String userName = "tasuser";
             String passWord = "bteam";
-            
-            //Load MySQL Driver
-            //Class.forName("com.mysql.jdbc.Driver").newInstance(); //Similar to line 22 might got it wrong, but will change later
             
             //Opens the connection
             this.conn = DriverManager.getConnection(server, userName, passWord);
@@ -37,7 +33,6 @@ public class TASDatabase {
             }
         }
         catch(SQLException e){System.out.println("");}
-        //catch(ClassNotFoundException e){System.out.println("");}
         catch(Exception e){}
     }
     
@@ -195,9 +190,6 @@ public class TASDatabase {
             
             Timestamp ts = Timestamp.valueOf(time);
             
-            //LocalDateTime originalTime = p.getOriginaltimestamp();
-            //String otsString = originalTime.format(dtf);
-            //System.err.println("New Punch Timestamp (from insertPunch(): " + otsString);
             String badgeid = p.getBadge().getId(); 
             int terminalid = p.getTerminalid(); 
             PunchType punchtypeid = p.getPunchtype(); 
@@ -225,7 +217,6 @@ public class TASDatabase {
                 
          }
          catch(Exception e){ e.printStackTrace();} // changed these to output differently and just print the full stack
-         //System.err.println("New Punch ID: " + results);
          return results;    
     }
     
