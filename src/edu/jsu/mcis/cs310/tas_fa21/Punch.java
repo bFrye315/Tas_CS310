@@ -10,7 +10,8 @@ public class Punch {
     private int terminalid;
     private Badge badge;
     private PunchType punchtype;
-    private LocalDateTime originaltimestamp;
+    private LocalDateTime originaltimestamp, adjustedtimestamp;
+    private String adjustmenttype;
 
     // the 3 param constructor now sets the originaltimestamp to the current
     // time when it is made, the setOriginaltimestamp method can still change it
@@ -66,6 +67,16 @@ public class Punch {
         s.append("#").append(badge.getId()).append(" ").append(punchtype).append(": ").
                 append(originaltimestamp.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase()).
                 append(" ").append(originaltimestamp.format(format));
+                
+        return s.toString();
+    }
+    
+    public String printAdjusted(){
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("LL/dd/uuuu HH:mm:ss");
+        StringBuilder s = new StringBuilder();
+        s.append("#").append(badge.getId()).append(" ").append(punchtype).append(": ").
+                append(originaltimestamp.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase()).
+                append(" ").append(adjustedtimestamp.format(format)).append(" (").append(adjustmenttype).append(")");
                 
         return s.toString();
     }
