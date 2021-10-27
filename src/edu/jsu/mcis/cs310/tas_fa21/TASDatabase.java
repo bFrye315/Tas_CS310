@@ -244,6 +244,7 @@ public class TASDatabase {
                     int punchtypeid = resultsSet.getInt("punchTypeId");
 
                     Punch punch = new Punch(terminalid, getBadge(badgeid), punchtypeid, originaltimestamp);
+                    
                     alist.add(punch);
                     
                 }
