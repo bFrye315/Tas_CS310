@@ -59,6 +59,10 @@ public class Punch {
         return originaltimestamp;
     }
     
+    public LocalDateTime getAdjustedtimestamp() {
+        return adjustedtimestamp;
+    }
+    
     public String printOriginal(){//"#D2C39273 CLOCK IN: WED 09/05/2018 07:00:07"
         DateTimeFormatter format = DateTimeFormatter.ofPattern("LL/dd/uuuu HH:mm:ss");
         StringBuilder s = new StringBuilder();
@@ -209,7 +213,6 @@ public class Punch {
         this.adjustedtimestamp = LocalDateTime.of(originaltimestamp.toLocalDate(), adjustedPT);
     }
     
-
     
     //Feature 3
     //public void adjust(Shift s){
