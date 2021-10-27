@@ -181,20 +181,20 @@ public class Punch {
         
         // interval round
         else if ((!(min == interval)) && (!(min == (interval * 2))) && (!(min == (interval * 3))) && (!(min == ZERO))){
-            int mod = min % 15;
+            int mod = min % interval;
             if(mod < 8){
                 if(sec < 30){
                     adjustedPT = punchTime.minusMinutes(mod).withSecond(0);
                     this.adjustmenttype = "Interval Round";   
                 }
                 else{
-                    adjustedPT = punchTime.plusMinutes(15 - mod).withSecond(0);
+                    adjustedPT = punchTime.plusMinutes(interval - mod).withSecond(0);
                     this.adjustmenttype = "Interval Round";
                 }
                 
             }
             else if(mod > 8){
-                adjustedPT = punchTime.plusMinutes(15 - mod).withSecond(0);
+                adjustedPT = punchTime.plusMinutes(interval - mod).withSecond(0);
                 this.adjustmenttype = "Interval Round";
             }
            
@@ -212,9 +212,9 @@ public class Punch {
 
     
     //Feature 3
-    public void adjust(Shift s){
+    //public void adjust(Shift s){
         
-    }
+    //}
     
     
 }
