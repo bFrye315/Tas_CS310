@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.time.*;
+import java.util.HashMap;
+import org.json.simple.*; 
 
 public class TAS {
 
@@ -81,7 +83,9 @@ public class TAS {
 
     }
     
+    //Feature 5
+    public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist){
+        
+    }
+    
 }
-
-//Feature 4
-//public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift)
