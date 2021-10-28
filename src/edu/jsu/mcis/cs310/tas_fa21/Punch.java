@@ -90,7 +90,7 @@ public class Punch {
     public void adjust(Shift s){
         LocalTime punchTime = originaltimestamp.toLocalTime();
         final int ZERO = 0;
-        LocalTime zeroPT = punchTime.withSecond(0).withNano(0);
+        LocalTime zeroPT = punchTime.withSecond(ZERO).withNano(ZERO);
         
         LocalTime adjustedPT = null;
         
@@ -102,12 +102,11 @@ public class Punch {
         int interval = s.getInterval();
         int gracePeriod = s.getGraceperiod();
         int dock = s.getDock();
-        
-        
-       
+
         int min = punchTime.getMinute();
         int sec = punchTime.getSecond();
        
+        
         
        
         
@@ -133,7 +132,10 @@ public class Punch {
             
         }
         // punch in late start
-        else if ((punchTime.isAfter(shiftStart)) && (punchTime.isBefore(shiftStart.plusMinutes(interval)) || punchTime.equals(shiftStart.plusMinutes(interval))) && (punchtype != PunchType.CLOCK_OUT) && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SATURDAY)) && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY))){
+        else if ((punchTime.isAfter(shiftStart)) && (punchTime.isBefore(shiftStart.plusMinutes(interval)) 
+                || punchTime.equals(shiftStart.plusMinutes(interval))) && (punchtype != PunchType.CLOCK_OUT) 
+                && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SATURDAY)) 
+                && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY))){
             
             if(punchTime.isBefore(shiftStart.plusMinutes(gracePeriod))){
                 adjustedPT = shiftStart;
@@ -146,14 +148,20 @@ public class Punch {
 
         }
         // punch in early start
-        else if((punchTime.isBefore(shiftStart)) && (punchTime.isAfter(shiftStart.minusMinutes(interval)) || punchTime.equals(shiftStart.minusMinutes(interval))) && (punchtype != PunchType.CLOCK_OUT) && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SATURDAY)) && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY)) ){
+        else if((punchTime.isBefore(shiftStart)) && (punchTime.isAfter(shiftStart.minusMinutes(interval)) 
+                || punchTime.equals(shiftStart.minusMinutes(interval))) && (punchtype != PunchType.CLOCK_OUT) 
+                && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SATURDAY)) 
+                && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY)) ){
                 adjustedPT = shiftStart;
                 this.adjustmenttype = "Shift Start";
         }
        
         
         //punch out early stop
-        else if((punchTime.isBefore(shiftStop)) && (punchTime.isAfter(shiftStop.minusMinutes(interval)) || punchTime.equals(shiftStop.minusMinutes(interval))) && (punchtype != PunchType.CLOCK_IN) && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SATURDAY)) && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY))){
+        else if((punchTime.isBefore(shiftStop)) && (punchTime.isAfter(shiftStop.minusMinutes(interval)) 
+                || punchTime.equals(shiftStop.minusMinutes(interval))) && (punchtype != PunchType.CLOCK_IN) 
+                && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SATURDAY)) 
+                && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY))){
             if(punchTime.isAfter(shiftStop.minusMinutes(gracePeriod))){
                 adjustedPT = shiftStop;
                 this.adjustmenttype = "Shift Stop";
@@ -165,13 +173,18 @@ public class Punch {
         }
         
         // punch out late stop
-        else if((punchTime.isAfter(shiftStop)) && (punchTime.isBefore(shiftStop.plusMinutes(interval)) || punchTime.equals(shiftStop.plusMinutes(interval))) && (punchtype != PunchType.CLOCK_IN) && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SATURDAY)) && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY))){
+        else if((punchTime.isAfter(shiftStop)) && (punchTime.isBefore(shiftStop.plusMinutes(interval)) 
+                || punchTime.equals(shiftStop.plusMinutes(interval))) && (punchtype != PunchType.CLOCK_IN) 
+                && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SATURDAY)) 
+                && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY))){
             adjustedPT = shiftStop;
             this.adjustmenttype = "Shift Stop";
         }
         
         // punch in late lunchstart
-        else if((punchTime.isAfter(lunchStart)) && (punchTime.isBefore(lunchStop)) && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SATURDAY)) && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY))){
+        else if((punchTime.isAfter(lunchStart)) && (punchTime.isBefore(lunchStop)) 
+                && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SATURDAY)) 
+                && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY))){
             if(punchtype.equals(PunchType.CLOCK_OUT)){
                 adjustedPT = lunchStart;
                 this.adjustmenttype = "Lunch Start";
