@@ -225,12 +225,4 @@ public class Punch {
 
         this.adjustedtimestamp = LocalDateTime.of(originaltimestamp.toLocalDate(), adjustedPT);
     }
-    
-    
-    //Feature 3
-    //public void adjust(Shift s){
-        
-    //}
-    
-    
 }
