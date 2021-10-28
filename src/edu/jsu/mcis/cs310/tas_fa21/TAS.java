@@ -9,6 +9,7 @@ package edu.jsu.mcis.cs310.tas_fa21;
 import java.util.ArrayList;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.time.*;
 
 public class TAS {
 
@@ -43,14 +44,28 @@ public class TAS {
             //}
         //}
         try {
+            
             for (int i = 0; i < dailypunchList.size(); i+=2) {
                 Duration duration = Duration.between(dailypunchList.get(i).getAdjustedtimestamp(), dailypunchList.get(i + 1).getAdjustedtimestamp());
                 System.out.println(dailypunchList.get(i).getAdjustedtimestamp());
                 System.out.println(dailypunchList.get(i + 1).getAdjustedtimestamp());
                 int totalMinutes = (int)duration.toMinutes();
                 totalTime = totalTime + totalMinutes;
+                
                 System.out.println(totalTime);
                 System.out.println(" ");
+            }
+            
+            boolean lunchClockOut = false;
+            for(Punch p : dailypunchList){
+                if(p.getAdjustedtimestamp().toLocalTime().equals(shift.getLunchstart())){
+                    lunchClockOut = true;
+                    break;
+                }
+                
+            }
+            if(!lunchClockOut){
+                totalTime = totalTime - shift.getLunchduration();
             }
             
         }
