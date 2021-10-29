@@ -97,16 +97,16 @@ public class Punch {
     }
     
     public void adjust(Shift s){
-        LocalTime punchTime = originaltimestamp.toLocalTime();
+        LocalDateTime punchTime = originaltimestamp;
         final int ZERO = 0;
-        LocalTime zeroPT = punchTime.withSecond(ZERO).withNano(ZERO);
+        LocalDateTime zeroPT = punchTime.withSecond(ZERO).withNano(ZERO);
         
-        LocalTime adjustedPT = null;
+        LocalDateTime adjustedPT = null;
         
-        LocalTime shiftStart = s.getStart();
-        LocalTime shiftStop = s.getStop();
-        LocalTime lunchStart = s.getLunchstart();
-        LocalTime lunchStop = s.getLunchstop();
+        LocalDateTime shiftStart = s.getStart().atDate(originaltimestamp.toLocalDate());
+        LocalDateTime shiftStop = s.getStop().atDate(originaltimestamp.toLocalDate());
+        LocalDateTime lunchStart = s.getLunchstart().atDate(originaltimestamp.toLocalDate());
+        LocalDateTime lunchStop = s.getLunchstop().atDate(originaltimestamp.toLocalDate());
         
         int interval = s.getInterval();
         int gracePeriod = s.getGraceperiod();
@@ -232,6 +232,6 @@ public class Punch {
             this.adjustmenttype = "None";
         }
 
-        this.adjustedtimestamp = LocalDateTime.of(originaltimestamp.toLocalDate(), adjustedPT);
+        this.adjustedtimestamp = adjustedPT;
     }
 }
