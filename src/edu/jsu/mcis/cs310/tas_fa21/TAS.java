@@ -8,12 +8,10 @@
 package edu.jsu.mcis.cs310.tas_fa21;
 import java.util.ArrayList;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import org.json.simple.*; 
+
 
 public class TAS {
 
@@ -88,7 +86,7 @@ public class TAS {
     //Feature 5
     public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist){
         DateTimeFormatter format = DateTimeFormatter.ofPattern("EEE" + " LL/dd/uuuu HH:mm:ss");
-        ArrayList<LinkedHashMap<String, String>> jsonData = new ArrayList<>();
+        ArrayList<HashMap<String, String>> jsonData = new ArrayList<>();
         //"[{\"originaltimestamp\":\"TUE 09\\/18\\/2018 11:59:33\",
         //\"badgeid\":\"08D01475\",
         //\"adjustedtimestamp\":\"TUE 09\\/18\\/2018 12:00:00\",
@@ -98,21 +96,22 @@ public class TAS {
         //\"punchtype\":\"CLOCK IN\"}
         for(Punch punch: dailypunchlist){
             
-            LinkedHashMap<String, String> punchData = new LinkedHashMap<>();
-            punchData.put("originaltimestamp", String.valueOf(punch.getOriginaltimestamp().format(format).toUpperCase()));
-            punchData.put("badgeid", String.valueOf(punch.getBadge().getId()));
-            punchData.put("adjustedtimestamp", String.valueOf(punch.getAdjustedtimestamp().format(format).toUpperCase()));
-            punchData.put("adjustmenttype", String.valueOf(punch.getAdjustmenttype()));
-            punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
+            HashMap<String, String> punchData = new HashMap<>();
+            
             punchData.put("id", String.valueOf(punch.getId()));
-            punchData.put("punchtypeid", String.valueOf(punch.getPunchtype()));
-           
+            punchData.put("badgeid", String.valueOf(punch.getBadge().getId()));
+            punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
+            punchData.put("punchtype", String.valueOf(punch.getPunchtype()));
+            punchData.put("adjustmenttype", String.valueOf(punch.getAdjustmenttype()));
+            punchData.put("originaltimestamp", String.valueOf(punch.getOriginaltimestamp().format(format).toUpperCase()));
+            punchData.put("adjustedtimestamp", String.valueOf(punch.getAdjustedtimestamp().format(format).toUpperCase()));
             jsonData.add(punchData);
-              
+            
         }
         
-         String json = JSONValue.toJSONString(jsonData);
+        String json = JSONValue.toJSONString(jsonData);
 
+        
         
         
         
