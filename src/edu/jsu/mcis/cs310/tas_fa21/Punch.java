@@ -9,6 +9,7 @@ import java.util.Locale;
 public class Punch {
     
     private int terminalid;
+    private int id;
     private Badge badge;
     private PunchType punchtype;
     private LocalDateTime originaltimestamp;
@@ -28,20 +29,31 @@ public class Punch {
         this.originaltimestamp = LocalDateTime.now().withSecond(0).withNano(0);
     }
 
-    public void setOriginaltimestamp(LocalDateTime originaltimestamp) {
-        this.originaltimestamp = originaltimestamp;
-    }
-    
     public Punch(int terminalid, Badge badge, int punchtypeid, LocalDateTime originaltimestamp){
         this.terminalid = terminalid;
         this.badge = badge;
         this.punchtype = PunchType.values()[punchtypeid];
         this.originaltimestamp = originaltimestamp;
-    }
-    
-    public Punch(){
         
     }
+     public void setOriginaltimestamp(LocalDateTime originaltimestamp) {
+        this.originaltimestamp = originaltimestamp;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getAdjustmenttype() {
+        return adjustmenttype;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+     
+     
+
 
     public int getTerminalid() {
         return terminalid;
@@ -64,22 +76,19 @@ public class Punch {
     }
     
     public String printOriginal(){//"#D2C39273 CLOCK IN: WED 09/05/2018 07:00:07"
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("LL/dd/uuuu HH:mm:ss");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("EEE " +"LL/dd/uuuu HH:mm:ss");
         StringBuilder s = new StringBuilder();
         s.append("#").append(badge.getId()).append(" ").append(punchtype).append(": ").
-                append(originaltimestamp.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase()).
-                append(" ").append(originaltimestamp.format(format));
+                append(originaltimestamp.format(format).toUpperCase());
                 
         return s.toString();
     }
       
     public String printAdjusted(){
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("LL/dd/uuuu HH:mm:ss");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("EEE " + "LL/dd/uuuu HH:mm:ss");
         StringBuilder s = new StringBuilder();
         s.append("#").append(badge.getId()).append(" ").append(punchtype).append(": ").
-                append(adjustedtimestamp.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase()).
-                append(" ").
-                append(adjustedtimestamp.format(format)).
+                append(adjustedtimestamp.format(format).toUpperCase()).
                 append(" (").
                 append(adjustmenttype).
                 append(")");
