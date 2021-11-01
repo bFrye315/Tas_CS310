@@ -119,4 +119,15 @@ public class TAS {
         return json;
     }
     
+    public static double calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s){
+        double percentage = 0;
+        int totalWeeklyMinutes = 0;
+        final int TOTALWEEKINMIN = 2400;
+        for(Punch p : punchlist){
+            totalWeeklyMinutes += calculateTotalMinutes(dailypunchlist, s);
+        }
+        percentage = ((double)TOTALWEEKINMIN / (double)totalWeeklyMinutes) * 100;
+        
+        return percentage;
+    }
 }
