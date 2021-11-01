@@ -206,10 +206,10 @@ public class Punch {
         }
         
         // interval round
-        else if ((!(min == interval)) && (!(min == (interval * 2))) && (!(min == (interval * 3))) && (!(min == ZERO))){
+        else if ((!(min == interval)) && (!(min == (interval  + interval))) && (!(min == (interval + interval + interval))) && (!(min == ZERO))){
             int mod = min % interval;
-            if(mod < 8){
-                if(sec < 30){
+            if(mod < Math.ceil(interval / 2.0)){
+                if(sec < interval + interval){
                     adjustedPT = punchTime.minusMinutes(mod).withSecond(0);
                     this.adjustmenttype = "Interval Round";   
                 }
