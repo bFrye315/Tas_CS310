@@ -258,4 +258,34 @@ public class TASDatabase {
         
     }
     
+     public Absenteeism getAbsenteeism(String badgeid, LocalDate payperiod){
+        Absenteeism outputAbsenteeism = null;
+        try{
+            //Prepares the query
+            query = "SELECT * FROM absenteeism WHERE badgeid = ? AND payperiod = ?";
+
+            prstSelect = conn.prepareStatement(query);
+            prstSelect.setString(1, badgeid);
+            prstSelect.setDate(2, java.sql.Date.valueOf(payperiod));
+            
+            //Executing the query
+            boolean hasResults = prstSelect.execute();
+            
+            
+                if(hasResults){
+                    ResultSet resultsSet = prstSelect.getResultSet();
+                    resultsSet.next();
+                    
+                    double percentage = resultsSet.getDouble("percentage");
+
+                    outputAbsenteeism = new Absenteeism(badgeid, payperiod, percentage);
+                    
+     
+                }
+            
+        }
+        catch(Exception e){e.printStackTrace();}
+        return outputAbsenteeism;
+    }
+    
 }
