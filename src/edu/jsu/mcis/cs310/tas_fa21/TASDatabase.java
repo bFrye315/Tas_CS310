@@ -287,5 +287,32 @@ public class TASDatabase {
         catch(Exception e){e.printStackTrace();}
         return outputAbsenteeism;
     }
+     
+     public ArrayList getPayPeriodPunchList(Badge badge, LocalDate payperiod){
+         ArrayList<Punch> list = null;
+         
+         try{
+             query = "SELECT * FROM punch WHERE badgeid=? AND DATE(payperiod)=?";
+             prstSelect = conn.prepareStatement(query);
+             
+             prstSelect.setString(1, badge.getId());
+             prstSelect.setDate(2, java.sql.Date.valueOf(payperiod));
+             
+             boolean hasResults = prstSelect.execute();
+             
+             if(hasResults){
+                 list = new ArrayList<>();
+                 
+                 ResultSet resultsSet = prstSelect.getResultSet();
+                 
+                 while(resultsSet.next()){
+                     String badgeid = resultsSet.getString("badgeid");
+                     LocalDateTime originaltimestamp = resultsSet.getTimestamp("payperiod").toLocalDateTime();
+                 }
+             }
+         }
+         catch (Exception e) { e.printStackTrace(); }
+         return list;
+     }
     
 }
