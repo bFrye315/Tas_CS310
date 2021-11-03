@@ -289,7 +289,48 @@ public class TASDatabase {
         catch(Exception e){e.printStackTrace();}
         return outputAbsenteeism;
     }
-     
+    
+      public ArrayList<Punch> getAdjustedDailyPunchList(Badge badge, LocalDate date, Shift s){
+        
+        ArrayList<Punch> alist = null;
+        
+        try {
+            query = "SELECT * FROM punch WHERE badgeid=? AND DATE(originaltimestamp)=?";
+            prstSelect = conn.prepareStatement(query);
+            prstSelect.setString(1, badge.getId());
+            prstSelect.setDate(2, java.sql.Date.valueOf(date));
+            
+            boolean hasResults = prstSelect.execute();
+            
+            
+            if(hasResults){
+                
+                alist = new ArrayList<>();
+                
+                ResultSet resultsSet = prstSelect.getResultSet();
+
+                while(resultsSet.next()) {
+
+                    int terminalid = resultsSet.getInt("terminalid");
+                    String badgeid = resultsSet.getString("badgeid");
+                    LocalDateTime originaltimestamp = resultsSet.getTimestamp("originaltimestamp").toLocalDateTime();
+                    int punchtypeid = resultsSet.getInt("punchTypeId");
+
+                    Punch punch = new Punch(terminalid, getBadge(badgeid), punchtypeid, originaltimestamp);
+                    punch.setId(resultsSet.getInt("id"));
+                    punch.adjust(s);
+                    
+                    alist.add(punch);
+                    
+                }
+            }
+                  
+        }
+        catch (Exception e) { e.printStackTrace(); }
+        
+        return alist;   
+        
+    }
     public ArrayList<Punch> getPayPeriodPunchList(Badge badge, LocalDate payperiod, Shift s){
         ArrayList<Punch> list = new ArrayList<>();
         
@@ -320,8 +361,8 @@ public class TASDatabase {
         
 
         LocalDate punchDate = beginOfWeek;
-        for (int i = 0; i < 7; i++){
-            list.addAll(getDailyPunchList(badge, punchDate));
+        for (int i = 0; i < DayOfWeek.SUNDAY.getValue(); i++){
+            list.addAll(getAdjustedDailyPunchList(badge, punchDate, s));
             
             punchDate = punchDate.plusDays(1);
         }
