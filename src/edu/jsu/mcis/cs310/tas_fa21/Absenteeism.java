@@ -8,7 +8,12 @@ public class Absenteeism {
     private LocalDate payperiod;
     private double percentage;
     
-    public Absenteeism(String badgeid, LocalDate payperiod, double percentage){
+    public Absenteeism(Badge badgeid, LocalDate payperiod, double percentage){
+        this.badgeid = badgeid.getId();
+        this.percentage = percentage;
+        this.payperiod = payperiod;
+    }
+     public Absenteeism(String badgeid, LocalDate payperiod, double percentage){
         this.badgeid = badgeid;
         this.percentage = percentage;
         this.payperiod = payperiod;
