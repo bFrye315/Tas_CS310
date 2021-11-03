@@ -6,6 +6,8 @@
  *         James Mollica
  */
 package edu.jsu.mcis.cs310.tas_fa21;
+import java.text.DecimalFormat;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -21,7 +23,7 @@ public class TAS {
         TASDatabase db;
         db = new TASDatabase(); 
        
-        Punch p = db.getPunch(3634);
+        Punch p = db.getPunch(4943);
         Badge b = p.getBadge();
         Shift s = db.getShift(b);
         
@@ -40,8 +42,8 @@ public class TAS {
             sb.append(p1.printAdjusted());
         }
         System.out.println(sb.toString());
-        
-        System.out.println(calculateAbsenteeism(payperiod, s));
+        DecimalFormat df = new DecimalFormat("0.00");
+        System.out.println(df.format(calculateAbsenteeism(payperiod, s)));
     }
     
     
@@ -52,23 +54,15 @@ public class TAS {
         for (int i = 0; i < dailypunchList.size(); i++) {
             //System.out.println(dailypunchList.get(i));
         }
-                        //needs change
-       // if (dailypunchList.size()==2){
-            //if (dailypunchList.get(1).getAdjustedtimestamp().isAfter(shift.getLunchstop())){
-                //totalTime = totalTime - 30;
-            //}
-        //}
+
         try {
             
             for (int i = 0; i < dailypunchList.size(); i+=2) {
                 Duration duration = Duration.between(dailypunchList.get(i).getAdjustedtimestamp(), dailypunchList.get(i + 1).getAdjustedtimestamp());
-                //System.out.println(dailypunchList.get(i).getAdjustedtimestamp());
-                //System.out.println(dailypunchList.get(i + 1).getAdjustedtimestamp());
+               
                 int totalMinutes = (int)duration.toMinutes();
                 totalTime = totalTime + totalMinutes;
                 
-                System.out.println(totalTime);
-                //System.out.println(" ");
             }
             
             boolean lunchClockOut = false;
@@ -76,10 +70,9 @@ public class TAS {
                 if(p.getAdjustedtimestamp().toLocalTime().equals(shift.getLunchstart())){
                     lunchClockOut = true;
                     break;
-                }
-                
+                }    
             }
-            if(!lunchClockOut && totalTime > shift.getLunchdeduct()){
+            if(!lunchClockOut && totalTime >= shift.getLunchdeduct()){
                 totalTime = totalTime - shift.getLunchduration();
             }
             
@@ -134,43 +127,53 @@ public class TAS {
         final double FORTYHRWEEK = 2400;
         final double TOP_PERCENTAGE = 100;
         
-        for(int i = 0; i < punchlist.size(); i+= 2){
+        for(int i = 0; i < punchlist.size(); i += 2){
              Duration duration = Duration.between(punchlist.get(i).getAdjustedtimestamp(), punchlist.get(i + 1).getAdjustedtimestamp());
              totalWeeklyMinutes += duration.toMinutes();
         }
-        int sat = 0, sun = 0, mon = 0, tue = 0, wed = 0, thur = 0, fri = 0;
+       
+        ArrayList<Punch> monPun = new ArrayList<>();
+        ArrayList<Punch> tuePun = new ArrayList<>();
+        ArrayList<Punch> wedPun = new ArrayList<>();
+        ArrayList<Punch> thurPun = new ArrayList<>();
+        ArrayList<Punch> friPun = new ArrayList<>();
+        ArrayList<Punch> satPun = new ArrayList<>();
+        ArrayList<Punch> sunPun = new ArrayList<>();
+        
+        
         for(Punch p : punchlist){
             switch(p.getAdjustedtimestamp().getDayOfWeek().getValue()){
                 case 1:
-                    mon +=1;
+                    monPun.add(p);
                     break;
                 case 2:
-                    tue +=1;
+                    
+                    tuePun.add(p);
                     break;
                 case 3:
-                    wed += 1;
+                    wedPun.add(p);
                     break;
                 case 4:
-                    thur += 1;
+                    thurPun.add(p);
                     break;
                 case 5:
-                    fri += 1;
+                    friPun.add(p);
                     break;
                 case 6:
-                    sat += 1;
+                    satPun.add(p);
                     break;
                 case 7:
-                    sun += 1;
+                    sunPun.add(p);
                     break;
-            }
-            
+            }            
         }
-        System.out.println(mon + "\n" + tue + "\n" + wed + "\n" + thur + "\n" + fri + "\n" + sat + "\n" + sun);
-        //totalWeeklyMinutes = calculateTotalMinutes(punchlist, s);
+        totalWeeklyMinutes = calculateTotalMinutes(monPun, s) + calculateTotalMinutes(tuePun, s) + calculateTotalMinutes(wedPun, s) + 
+                calculateTotalMinutes(thurPun, s) + calculateTotalMinutes(friPun, s) + calculateTotalMinutes(satPun, s) + calculateTotalMinutes(sunPun, s);
         
         percentage = (totalWeeklyMinutes/FORTYHRWEEK) * TOP_PERCENTAGE;
         
         percentage = TOP_PERCENTAGE - percentage;
+        percentage = Math.round(percentage * TOP_PERCENTAGE)/TOP_PERCENTAGE;
         
         return percentage;
     }
