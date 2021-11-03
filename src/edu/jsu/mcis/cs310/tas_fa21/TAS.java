@@ -8,6 +8,8 @@
 package edu.jsu.mcis.cs310.tas_fa21;
 import java.util.ArrayList;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import org.json.simple.*; 
@@ -19,7 +21,7 @@ public class TAS {
         TASDatabase db;
         db = new TASDatabase(); 
        
-        Punch p = db.getPunch(3634);
+        Punch p = db.getPunch(1087);
         Badge b = p.getBadge();
         Shift s = db.getShift(b);
         
@@ -29,6 +31,15 @@ public class TAS {
             punch.adjust(s);
         } 
         calculateTotalMinutes(dailypunchlist,s);
+        
+        
+        
+        ArrayList<Punch> payperiod = db.getPayPeriodPunchList(b, p.getOriginaltimestamp().toLocalDate(), s);
+        StringBuilder sb = new StringBuilder();
+        for(Punch p1 : payperiod){
+            sb.append(p1.printOriginal());
+        }
+        System.out.println(sb.toString());
     }
     
     
@@ -124,7 +135,7 @@ public class TAS {
         int totalWeeklyMinutes = 0;
         final int TOTALWEEKINMIN = 2400;
         for(Punch p : punchlist){
-            totalWeeklyMinutes += calculateTotalMinutes(dailypunchlist, s);
+            totalWeeklyMinutes += calculateTotalMinutes(punchlist, s);
         }
         percentage = ((double)TOTALWEEKINMIN / (double)totalWeeklyMinutes) * 100;
         
