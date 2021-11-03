@@ -208,13 +208,18 @@ public class Punch {
         // interval round
         else if ((!(min == interval)) && (!(min == (interval  + interval))) && (!(min == (interval + interval + interval))) && (!(min == ZERO))){
             int mod = min % interval;
+            
             if(mod < Math.ceil(interval / 2.0)){
-                if(sec < interval + interval){
+                if(mod == 7 && sec < interval + interval){
                     adjustedPT = punchTime.minusMinutes(mod).withSecond(0);
                     this.adjustmenttype = "Interval Round";   
                 }
-                else{
+                else if (mod == 7 && sec >= interval + interval) {
                     adjustedPT = punchTime.plusMinutes(interval - mod).withSecond(0);
+                    this.adjustmenttype = "Interval Round";
+                }
+                else{
+                    adjustedPT = punchTime.minusMinutes(mod).withSecond(0);
                     this.adjustmenttype = "Interval Round";
                 }
                 
