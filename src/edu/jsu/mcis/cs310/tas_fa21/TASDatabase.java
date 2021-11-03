@@ -6,7 +6,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Locale;
 
 //Feature 1
 public class TASDatabase {
@@ -258,14 +260,14 @@ public class TASDatabase {
         
     }
     
-     public Absenteeism getAbsenteeism(String badgeid, LocalDate payperiod){
+     public Absenteeism getAbsenteeism(Badge badge, LocalDate payperiod){
         Absenteeism outputAbsenteeism = null;
         try{
             //Prepares the query
             query = "SELECT * FROM absenteeism WHERE badgeid = ? AND payperiod = ?";
 
             prstSelect = conn.prepareStatement(query);
-            prstSelect.setString(1, badgeid);
+            prstSelect.setString(1, badge.getId());
             prstSelect.setDate(2, java.sql.Date.valueOf(payperiod));
             
             //Executing the query
@@ -278,7 +280,7 @@ public class TASDatabase {
                     
                     double percentage = resultsSet.getDouble("percentage");
 
-                    outputAbsenteeism = new Absenteeism(badgeid, payperiod, percentage);
+                    outputAbsenteeism = new Absenteeism(badge, payperiod, percentage);
                     
      
                 }
@@ -288,31 +290,48 @@ public class TASDatabase {
         return outputAbsenteeism;
     }
      
-     public ArrayList getPayPeriodPunchList(Badge badge, LocalDate payperiod){
-         ArrayList<Punch> list = null;
-         
-         try{
-             query = "SELECT * FROM punch WHERE badgeid=? AND DATE(payperiod)=?";
-             prstSelect = conn.prepareStatement(query);
-             
-             prstSelect.setString(1, badge.getId());
-             prstSelect.setDate(2, java.sql.Date.valueOf(payperiod));
-             
-             boolean hasResults = prstSelect.execute();
-             
-             if(hasResults){
-                 list = new ArrayList<>();
-                 
-                 ResultSet resultsSet = prstSelect.getResultSet();
-                 
-                 while(resultsSet.next()){
-                     String badgeid = resultsSet.getString("badgeid");
-                     LocalDateTime originaltimestamp = resultsSet.getTimestamp("payperiod").toLocalDateTime();
-                 }
-             }
-         }
-         catch (Exception e) { e.printStackTrace(); }
-         return list;
+    public ArrayList<Punch> getPayPeriodPunchList(Badge badge, LocalDate payperiod, Shift s){
+        ArrayList<Punch> list = new ArrayList<>();
+        
+        LocalDate beginOfWeek = payperiod;
+        switch(payperiod.getDayOfWeek().getValue()){
+            case 1:
+                beginOfWeek = payperiod.minusDays(1);
+                break;
+            case 2:
+                beginOfWeek = payperiod.minusDays(2);
+                break;
+            case 3:
+                beginOfWeek = payperiod.minusDays(3);
+                break;
+            case 4:
+                beginOfWeek = payperiod.minusDays(4);
+                break;
+            case 5:
+                beginOfWeek = payperiod.minusDays(5);
+                break;    
+            case 6:
+                beginOfWeek = payperiod.minusDays(6);
+                break;
+            case 7:
+                beginOfWeek = payperiod;
+                break;
+        }
+        
+
+        LocalDate punchDate = beginOfWeek;
+        for (int i = 0; i < 7; i++){
+            list.addAll(getDailyPunchList(badge, punchDate));
+            
+            punchDate = punchDate.plusDays(1);
+        }
+        
+        
+        
+        return list;
      }
     
+    public void insertAbsenteeism(Absenteeism absenteeism){
+        
+    }
 }
