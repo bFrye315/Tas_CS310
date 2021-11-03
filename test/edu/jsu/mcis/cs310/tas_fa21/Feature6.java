@@ -12,7 +12,7 @@ public class Feature6 {
     @Before
     public void setup() {
         
-        db = new TASDatabase();//"localhost", "root", "CS488");
+        db = new TASDatabase();
         
     }
     
