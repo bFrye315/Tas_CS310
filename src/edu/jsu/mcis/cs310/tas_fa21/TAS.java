@@ -177,4 +177,16 @@ public class TAS {
         
         return percentage;
     }
+    
+    
+    
+    public static String getPunchListTotalsAsJSON(ArrayList<Punch> punchlist, Shift s){
+        String json = "";
+        
+        
+        
+        
+        
+        return json;
+    }
 }
