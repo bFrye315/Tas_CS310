@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -334,8 +335,9 @@ public class TASDatabase {
     public ArrayList<Punch> getPayPeriodPunchList(Badge badge, LocalDate payperiod, Shift s){
         ArrayList<Punch> list = new ArrayList<>();
         
-        LocalDate beginOfWeek = payperiod;
-        switch(payperiod.getDayOfWeek().getValue()){
+        LocalDate beginOfWeek = payperiod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        
+        /**switch(payperiod.getDayOfWeek().getValue()){
             case 1:
                 beginOfWeek = payperiod.minusDays(1);
                 break;
@@ -357,18 +359,15 @@ public class TASDatabase {
             case 7:
                 beginOfWeek = payperiod;
                 break;
-        }
+        }*/
         
-
         LocalDate punchDate = beginOfWeek;
         for (int i = 0; i < DayOfWeek.SUNDAY.getValue(); i++){
             list.addAll(getAdjustedDailyPunchList(badge, punchDate, s));
             
             punchDate = punchDate.plusDays(1);
         }
-        
-        
-        
+
         return list;
      }
     
