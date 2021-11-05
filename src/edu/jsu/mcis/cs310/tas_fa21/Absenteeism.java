@@ -6,25 +6,51 @@ import java.time.format.DateTimeFormatter;
 
 public class Absenteeism {
     private String badgeid;
-    private LocalDate payperiod;
+    private LocalDateTime payperiod;
     private double percentage;
     
     public Absenteeism(Badge badgeid, LocalDate payperiod, double percentage){
         this.badgeid = badgeid.getId();
         this.percentage = percentage;
-        this.payperiod = payperiod;
+        this.payperiod = setToStartOfWeek(payperiod).atTime(0, 0, 0);
     }
-     public Absenteeism(String badgeid, LocalDate payperiod, double percentage){
+    public Absenteeism(String badgeid, LocalDate payperiod, double percentage){
         this.badgeid = badgeid;
         this.percentage = percentage;
-        this.payperiod = payperiod;
+        this.payperiod = setToStartOfWeek(payperiod).atTime(0, 0, 0);
     }
-
+    private LocalDate setToStartOfWeek(LocalDate day){
+     
+        switch(day.getDayOfWeek().getValue()){
+            case 1:
+                day = day.minusDays(1);
+                break;
+            case 2:
+                day = day.minusDays(2);
+                break;
+            case 3:
+                day = day.minusDays(3);
+                break;
+            case 4:
+                day = day.minusDays(4);
+                break;
+            case 5:
+                day = day.minusDays(5);
+                break;    
+            case 6:
+                day = day.minusDays(6);
+                break;
+            case 7:
+                day = day;
+                break;
+        }
+        return day;
+    } 
     public String getBadgeid() {
         return badgeid;
     }
 
-    public LocalDate getPayperiod() {
+    public LocalDateTime getPayperiod() {
         return payperiod;
     }
 
@@ -37,7 +63,7 @@ public class Absenteeism {
     }
 
     public void setPayperiod(LocalDate payperiod) {
-        this.payperiod = payperiod;
+        this.payperiod = setToStartOfWeek(payperiod).atTime(0, 0, 0);
     }
 
     public void setPercentage(double percentage) {
