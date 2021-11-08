@@ -123,20 +123,20 @@ public class Punch {
         if(zeroPT.equals(shiftStart) || zeroPT.equals(shiftStop) || zeroPT.equals(lunchStart) || zeroPT.equals(lunchStop)){
             if (zeroPT.equals(shiftStart)){
                 adjustedPT = shiftStart;
-                this.adjustmenttype = "None";
+                this.adjustmenttype = "Shift Start";
                 
             }
             else if(zeroPT.equals(shiftStop)){
                 adjustedPT = shiftStop;
-                this.adjustmenttype = "None";
+                this.adjustmenttype = "Shift Stop";
             }
             else if(zeroPT.equals(lunchStart)){
                 adjustedPT = lunchStart;
-                this.adjustmenttype = "None";
+                this.adjustmenttype = "Lunch Start";
             }
             else{
                 adjustedPT = lunchStop;
-                this.adjustmenttype = "None";
+                this.adjustmenttype = "Lunch Stop";
             }
             
         }
