@@ -9,6 +9,8 @@ package edu.jsu.mcis.cs310.tas_fa21;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import org.json.simple.*; 
@@ -26,6 +28,9 @@ public class TAS {
         Punch p = db.getPunch(3634);
         Badge b = p.getBadge();
         Shift s = db.getShift(b);
+        LocalDateTime ts = p.getOriginaltimestamp();
+        
+        
         
         ArrayList<Punch> dailypunchlist = db.getDailyPunchList(b, p.getOriginaltimestamp().toLocalDate());
         
@@ -47,6 +52,12 @@ public class TAS {
         System.out.println(sb.toString());
         DecimalFormat df = new DecimalFormat("0.00");
         System.out.println(df.format(calculateAbsenteeism(payperiod, s)));
+        double percentage = calculateAbsenteeism(payperiod, s);
+        Absenteeism a = db.getAbsenteeism(b, ts.toLocalDate());
+        System.out.println("badgeid: " + a.getBadgeid());
+        System.out.println("payperiod: " +a.getPayperiod());
+        System.out.println("percentage: " + a.getPercentage());
+        System.out.println();
     }
     
     
