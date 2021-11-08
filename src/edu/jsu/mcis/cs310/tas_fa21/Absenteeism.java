@@ -8,11 +8,13 @@ public class Absenteeism {
     private String badgeid;
     private LocalDateTime payperiod;
     private double percentage;
+    private Badge badge;
     
     public Absenteeism(Badge badgeid, LocalDate payperiod, double percentage){
         this.badgeid = badgeid.getId();
         this.percentage = percentage;
         this.payperiod = setToStartOfWeek(payperiod).atTime(0, 0, 0);
+        this.badge = badgeid;
     }
     public Absenteeism(String badgeid, LocalDate payperiod, double percentage){
         this.badgeid = badgeid;
@@ -45,7 +47,12 @@ public class Absenteeism {
                 break;
         }
         return day;
-    } 
+    }
+
+    public Badge getBadge() {
+        return badge;
+    }
+    
     public String getBadgeid() {
         return badgeid;
     }
@@ -68,6 +75,10 @@ public class Absenteeism {
 
     public void setPercentage(double percentage) {
         this.percentage = percentage;
+    }
+
+    public void setBadge(Badge badge) {
+        this.badge = badge;
     }
     
     @Override
