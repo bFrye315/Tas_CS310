@@ -269,7 +269,7 @@ public class TASDatabase {
 
             prstSelect = conn.prepareStatement(query);
             prstSelect.setString(1, badge.getId());
-            prstSelect.setDate(2, java.sql.Date.valueOf(payperiod));
+            prstSelect.setDate(2, java.sql.Date.valueOf(payperiod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))));
             
             //Executing the query
             boolean hasResults = prstSelect.execute();
@@ -279,9 +279,12 @@ public class TASDatabase {
                     ResultSet resultsSet = prstSelect.getResultSet();
                     resultsSet.next();
                     
+                    
+                    
                     double percentage = resultsSet.getDouble("percentage");
+                    
 
-                    outputAbsenteeism = new Absenteeism(badge, payperiod, percentage);
+                    outputAbsenteeism = new Absenteeism(badge.getId(), payperiod, percentage);
                     
      
                 }
@@ -336,30 +339,6 @@ public class TASDatabase {
         ArrayList<Punch> list = new ArrayList<>();
         
         LocalDate beginOfWeek = payperiod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-        
-        /**switch(payperiod.getDayOfWeek().getValue()){
-            case 1:
-                beginOfWeek = payperiod.minusDays(1);
-                break;
-            case 2:
-                beginOfWeek = payperiod.minusDays(2);
-                break;
-            case 3:
-                beginOfWeek = payperiod.minusDays(3);
-                break;
-            case 4:
-                beginOfWeek = payperiod.minusDays(4);
-                break;
-            case 5:
-                beginOfWeek = payperiod.minusDays(5);
-                break;    
-            case 6:
-                beginOfWeek = payperiod.minusDays(6);
-                break;
-            case 7:
-                beginOfWeek = payperiod;
-                break;
-        }*/
         
         LocalDate punchDate = beginOfWeek;
         for (int i = 0; i < DayOfWeek.SUNDAY.getValue(); i++){
