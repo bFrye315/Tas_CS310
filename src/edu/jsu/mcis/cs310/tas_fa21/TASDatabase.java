@@ -373,5 +373,23 @@ public class TASDatabase {
     
     public void insertAbsenteeism(Absenteeism absenteeism){
         
+        // Get badge id, payperiod, and percentage from absenteeism object
+        String badgeid = absenteeism.getBadgeid();
+        LocalDateTime payperiod = absenteeism.getPayperiod();
+        Double percentage = absenteeism.getPercentage();
+        
+        try {
+            query = "INSERT INTO tas_fa21_v1.absenteeism (badgeid, payperiod, percentage) VALUES (?, ?, ?)";
+            prstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            
+            prstUpdate.setString(1, badgeid);
+            prstUpdate.setTimestamp(2, java.sql.Timestamp.valueOf(payperiod));
+            prstUpdate.setDouble(3, percentage);
+            
+            // Execute the query
+            updateCount = prstUpdate.executeUpdate();
+            
+        }
+        catch(Exception e){e.printStackTrace();}
     }
 }
