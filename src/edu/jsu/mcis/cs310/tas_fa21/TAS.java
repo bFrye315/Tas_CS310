@@ -57,7 +57,7 @@ public class TAS {
         System.out.println("badgeid: " + a.getBadgeid());
         System.out.println("payperiod: " +a.getPayperiod());
         System.out.println("percentage: " + a.getPercentage());
-        System.out.println();
+        System.out.println(getPunchListPlusTotalsAsJSON(payperiod,  s));
     }
     
     
@@ -223,13 +223,14 @@ public class TAS {
     
     public static String getPunchListPlusTotalsAsJSON(ArrayList<Punch> punchlist, Shift s){
         DecimalFormat df = new DecimalFormat("0.00");
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("EEE" + " LL/dd/uuuu HH:mm:ss");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("uuuu-LL-dd HH:mm:ss");
+        //ArrayList<HashMap<String, String>> punches = new ArrayList<>();
         ArrayList<HashMap<String, String>> jsonData = new ArrayList<>();
-        HashMap<String, String> timePercentage = new HashMap<>();
+        JSONObject timePercentage = new JSONObject();
         
         for(Punch punch: punchlist){
             
-            HashMap<String, String> punchData = new HashMap<>();
+            JSONObject punchData = new JSONObject();
             
             punchData.put("id", String.valueOf(punch.getId()));
             punchData.put("badgeid", String.valueOf(punch.getBadge().getId()));
@@ -244,8 +245,10 @@ public class TAS {
 
         timePercentage.put("totalminutes", String.valueOf(calculateTotalMinutes(punchlist, s)));
         timePercentage.put("absenteeism", String.valueOf(df.format(calculateAbsenteeism(punchlist, s)) + "%"));
-        jsonData.add(timePercentage);
-        String json = JSONValue.toJSONString(jsonData);
+        timePercentage.put("punchlist", jsonData);
+        
+        
+        String json = JSONValue.toJSONString(timePercentage);
         return json;
     }
 }
