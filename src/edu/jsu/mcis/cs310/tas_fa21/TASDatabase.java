@@ -21,7 +21,7 @@ public class TASDatabase {
     public TASDatabase(){
         try{
             //This is used for to identify the server
-            String server = ("jdbc:mysql://localhost/tas_fa21_v1");
+            String server = ("jdbc:mysql://localhost/tas_fa21_v2");
             String userName = "tasuser";
             String passWord = "bteam";
             
