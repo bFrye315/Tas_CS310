@@ -23,23 +23,15 @@ public class Shift {
     private int lunchduration;
     private int shiftduration; 
     
-    private DailySchedule ds = new DailySchedule();
+    private DailySchedule ds;
     
     public Shift(ShiftParameters params) {
         this.description = params.getDescription();
-    
-        this.interval = params.getInterval();
-        this.graceperiod = params.getGraceperiod();
-        this.dock = params.getDock();
-        this.lunchdeduct = params.getLunchdeduct();
- 
-    
-        this.start = params.getStart();
-        this.stop = params.getStop();
-        this.lunchstart = params.getLunchstart();
-        this.lunchstop = params.getLunchstop();
+
         this.shiftid = params.getId();
-       
+        
+        this.ds = new DailySchedule(params);
+        
         setShiftduration(params.getStart(), params.getStop());
         setLunchduration(params.getLunchstart(), params.getLunchstop());
     }
@@ -59,35 +51,35 @@ public class Shift {
     }
 
     public LocalTime getStop() {
-        return ds.getStop;
+        return ds.getStop();
     }
 
     public int getInterval() {
  
-        return ds.getInterval;
+        return ds.getInterval();
     }
 
     public int getGraceperiod() {
  
-        return ds.getGraceperiod;
+        return ds.getGraceperiod();
     }
 
     public int getDock() {
 
-        return ds.getDock;
+        return ds.getDock();
     }
 
     public LocalTime getLunchstart() {
    
-        return ds.getLunchstart;
+        return ds.getLunchstart();
     }
 
     public LocalTime getLunchstop() {
-        return ds.getLunchstop;
+        return ds.getLunchstop();
     }
 
     public int getLunchdeduct() {
-        return ds.getLunchdeduct;
+        return ds.getLunchdeduct();
     }
     
     public int getShiftid() {
@@ -120,9 +112,9 @@ public class Shift {
     public String toString(){
         //"Shift 1: 07:00 - 15:30 (510 minutes); Lunch: 12:00 - 12:30 (30 minutes)"
         StringBuilder s = new StringBuilder();
-        s.append(description).append(": ").append(ds.getStart).append(" - ").append(ds.getStop).append(" (")
-                .append(shiftduration).append(" minutes); Lunch: ").append(ds.getLunchstart).append(" - ")
-                .append(ds.getLunchstop).append(" (").append(lunchduration).append(" minutes)");
+        s.append(description).append(": ").append(ds.getStart()).append(" - ").append(ds.getStop()).append(" (")
+                .append(shiftduration).append(" minutes); Lunch: ").append(ds.getLunchstart()).append(" - ")
+                .append(ds.getLunchstop()).append(" (").append(lunchduration).append(" minutes)");
         return s.toString();
         
         
