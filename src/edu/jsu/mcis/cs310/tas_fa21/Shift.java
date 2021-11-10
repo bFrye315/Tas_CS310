@@ -18,19 +18,12 @@ public class Shift {
 
     
     private String description;
-    
-    private int interval;
-    private int graceperiod;
-    private int dock;
-    private int lunchdeduct;
+   
     private int shiftid;
     private int lunchduration;
     private int shiftduration; 
     
-    private LocalTime start;
-    private LocalTime stop;
-    private LocalTime lunchstart; 
-    private LocalTime lunchstop;
+    private DailySchedule ds = new DailySchedule();
     
     public Shift(ShiftParameters params) {
         this.description = params.getDescription();
@@ -46,13 +39,13 @@ public class Shift {
         this.lunchstart = params.getLunchstart();
         this.lunchstop = params.getLunchstop();
         this.shiftid = params.getId();
-        this.
+       
         setShiftduration(params.getStart(), params.getStop());
         setLunchduration(params.getLunchstart(), params.getLunchstop());
     }
      public Shift(Badge badgeid){
          
-     }
+    }
 
      
     public String getDescription() {
@@ -60,59 +53,41 @@ public class Shift {
     }
 
     public LocalTime getStart() {
-        /*
-        “Shift Start” and “Shift Stop” to refer to the regularly scheduled starting 
-        and stopping times of the employee’s shift
-        */
+  
         
-        return start;
+        return ds.getStart();
     }
 
     public LocalTime getStop() {
-        return stop;
+        return ds.getStop;
     }
 
     public int getInterval() {
-        /*
-        The number of minutes beforethe startof a shift, and afterthe endof a shift, 
-        in which an employee's early "clock in" and late "clock out" punches are 
-        adjusted forwardto the scheduled start of their shift, or backwardto the 
-        end of their shift, respectively.
-        */
-        return interval;
+ 
+        return ds.getInterval;
     }
 
     public int getGraceperiod() {
-        /*
-        The number of minutes afterthe startof a shift, and beforethe endof a shift, 
-        in which an employee's late "clock in" punches or early "clock out" punches are "forgiven." 
-        */
-        return graceperiod;
+ 
+        return ds.getGraceperiod;
     }
 
     public int getDock() {
-        /*
-        If a late "clock in" punch is made toolate after the start of the shift to 
-        fall within the grace period, the punch is adjusted forward in time from 
-        the start of the shiftby this amount (to discourage excess tardiness).
-        */
-        return dock;
+
+        return ds.getDock;
     }
 
     public LocalTime getLunchstart() {
-        /*
-        “Lunch Start” and “Lunch Stop” to refer to the start and stop of the shift’s 
-        scheduled lunch break.
-        */
-        return lunchstart;
+   
+        return ds.getLunchstart;
     }
 
     public LocalTime getLunchstop() {
-        return lunchstop;
+        return ds.getLunchstop;
     }
 
     public int getLunchdeduct() {
-        return lunchdeduct;
+        return ds.getLunchdeduct;
     }
     
     public int getShiftid() {
@@ -145,9 +120,9 @@ public class Shift {
     public String toString(){
         //"Shift 1: 07:00 - 15:30 (510 minutes); Lunch: 12:00 - 12:30 (30 minutes)"
         StringBuilder s = new StringBuilder();
-        s.append(description).append(": ").append(start).append(" - ").append(stop).append(" (")
-                .append(shiftduration).append(" minutes); Lunch: ").append(lunchstart).append(" - ")
-                .append(lunchstop).append(" (").append(lunchduration).append(" minutes)");
+        s.append(description).append(": ").append(ds.getStart).append(" - ").append(ds.getStop).append(" (")
+                .append(shiftduration).append(" minutes); Lunch: ").append(ds.getLunchstart).append(" - ")
+                .append(ds.getLunchstop).append(" (").append(lunchduration).append(" minutes)");
         return s.toString();
         
         
