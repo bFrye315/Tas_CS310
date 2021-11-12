@@ -4,7 +4,7 @@ import java.time.LocalTime;
 
 public class ShiftParameters {
     
-    private int id, interval, graceperiod, dock, lunchdeduct;
+    private int id, interval, graceperiod, dock, lunchdeduct, dailyscheduleid;
     private LocalTime start, stop, lunchstart, lunchstop;
     private String description;
 
@@ -86,6 +86,14 @@ public class ShiftParameters {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getDailyscheduleid() {
+        return dailyscheduleid;
+    }
+
+    public void setDailyscheduleid(int dailyscheduleid) {
+        this.dailyscheduleid = dailyscheduleid;
     }
     
 }
