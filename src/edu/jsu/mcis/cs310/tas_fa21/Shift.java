@@ -1,9 +1,4 @@
 /*
-Problem Definition:
-Badge , Shift , and Punch: Implement a new Java class for each of these business objects. 
-Objects of the Badge class will contain information from the database about a single employee badge, 
-and objects of the Shift class will contain information from the database about a single shift ruleset 
-(that is, the starting time, stopping time, and other parameters of a single shift).
 Author: Tyler, Brandon
 Date: 10/1/21
  */
@@ -16,7 +11,6 @@ import java.time.*;
 public class Shift {
     private final int MINPERHOUR = 60;
 
-    
     private String description;
    
     private int shiftid;
