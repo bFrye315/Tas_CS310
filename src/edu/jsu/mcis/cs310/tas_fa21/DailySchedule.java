@@ -4,23 +4,15 @@ import java.time.LocalTime;
 
 
 public class DailySchedule {
-    private int interval;
-    private int graceperiod;
-    private int dock;
-    private int lunchdeduct;
-    
-    private LocalTime start;
-    private LocalTime stop;
-    private LocalTime lunchstart; 
-    private LocalTime lunchstop;
-    
+    private int interval, graceperiod, dock, lunchdeduct;   
+    private LocalTime start, stop, lunchstart, lunchstop;
+ 
     public DailySchedule(ShiftParameters params) {
         this.interval = params.getInterval();
         this.graceperiod = params.getGraceperiod();
         this.dock = params.getDock();
         this.lunchdeduct = params.getLunchdeduct();
- 
-    
+
         this.start = params.getStart();
         this.stop = params.getStop();
         this.lunchstart = params.getLunchstart();
