@@ -418,10 +418,12 @@ public class TASDatabase {
     
     
     
-    public Shift getShift(int shiftid, LocalDate payperiodStart) {
+      public Shift getShift(int shiftid, LocalDate date) {
         
         Shift outputShift = null;
+        ShiftParameters ds = new ShiftParameters();
         
+        int dailyScheduleid;
         try{
             query = "SELECT * FROM shift WHERE id = ?";
             prstSelect = conn.prepareStatement(query);
@@ -433,56 +435,54 @@ public class TASDatabase {
                 ResultSet resultsSet = prstSelect.getResultSet();
                 resultsSet.next();
                 
-                ShiftParameters ds = new ShiftParameters();
+                
                 //DailySchedule ds = new DailySchedule();
                 
-                //ds.setStart(LocalTime.parse(resultsSet.getString("start")));
-                //ds.getDock();
                 ds.setDescription(resultsSet.getString("description"));
-                ds.setStart(LocalTime.parse(resultsSet.getString("start")));
-                ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
-                ds.setInterval(resultsSet.getInt("interval"));
-                ds.setGraceperiod(resultsSet.getInt("graceperiod"));
-                ds.setDock(resultsSet.getInt("dock"));
-                ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
-                ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
-                ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
                 ds.setId(shiftid);
-                
-                outputShift = new Shift(ds);
+
+                dailyScheduleid = resultsSet.getInt("dailyscheduleid");
+                try{
+                    query = "SELECT * FROM dailyschedule WHERE id = ?";
+                    prstSelect = conn.prepareStatement(query);
+                    prstSelect.setInt(1, dailyScheduleid);
+
+                    hasResults = prstSelect.execute();
+
+                    if(hasResults){
+                        resultsSet = prstSelect.getResultSet();
+                        resultsSet.next();
+
+                        ds.setStart(LocalTime.parse(resultsSet.getString("start")));
+                        ds.getDock();
+                        ds.setStart(LocalTime.parse(resultsSet.getString("start")));
+                        ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
+                        ds.setInterval(resultsSet.getInt("interval"));
+                        ds.setGraceperiod(resultsSet.getInt("graceperiod"));
+                        ds.setDock(resultsSet.getInt("dock"));
+                        ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
+                        ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
+                        ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
+
+                        outputShift = new Shift(ds);
+                    }
+                }
+                catch(Exception e){e.printStackTrace();}
             }
-            
-            /*if(hasResults){
-                ResultSet resultsSet = prstSelect.getResultSet();
-                resultsSet.next();
-                    
-                ShiftParameters params = new ShiftParameters();
-                    
-                params.setDescription(resultsSet.getString("description"));
-                params.setStart(LocalTime.parse(resultsSet.getString("start")));
-                params.setStop(LocalTime.parse(resultsSet.getString("stop")));
-                params.setInterval(resultsSet.getInt("interval"));
-                params.setGraceperiod(resultsSet.getInt("graceperiod"));
-                params.setDock(resultsSet.getInt("dock"));
-                params.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
-                params.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
-                params.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
-                params.setId(shiftid);
-                    
-                outputShift = new Shift(params);
-            }*/
+
         }
         catch(Exception e){e.printStackTrace();}
         
+
         return outputShift;
         
     }
-    
-    public Shift getShift(Badge badge, LocalDate payperiodStart){ 
+    public Shift getShift(Badge badge, LocalDate date){ 
         Shift outputShift = null;
-        try{ // reverted this back to the original query for the most part, 
-            //but changed a few things so it would still work as needed
-            
+        ShiftParameters ds = new ShiftParameters();
+        
+        int dailyScheduleid;
+        try{
             query = "SELECT * FROM shift WHERE id = (SELECT shiftid FROM employee WHERE badgeid = ?)";
             prstSelect = conn.prepareStatement(query);
             prstSelect.setString(1, badge.getId());
@@ -492,21 +492,39 @@ public class TASDatabase {
                 ResultSet resultsSet = prstSelect.getResultSet();
                 resultsSet.next();
                 
-                      
-                ShiftParameters params = new ShiftParameters();
-                    
-                params.setDescription(resultsSet.getString("description"));
-                params.setStart(LocalTime.parse(resultsSet.getString("start")));
-                params.setStop(LocalTime.parse(resultsSet.getString("stop")));
-                params.setInterval(resultsSet.getInt("interval"));
-                params.setGraceperiod(resultsSet.getInt("graceperiod"));
-                params.setDock(resultsSet.getInt("dock"));
-                params.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
-                params.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
-                params.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
-                params.setId(resultsSet.getInt("id"));
-                    
-                outputShift = new Shift(params);
+                
+                //DailySchedule ds = new DailySchedule();
+                
+                ds.setDescription(resultsSet.getString("description"));
+                ds.setId(resultsSet.getInt("id"));
+
+                dailyScheduleid = resultsSet.getInt("dailyscheduleid");
+                try{
+                    query = "SELECT * FROM dailyschedule WHERE id = ?";
+                    prstSelect = conn.prepareStatement(query);
+                    prstSelect.setInt(1, dailyScheduleid);
+
+                    hasResults = prstSelect.execute();
+
+                    if(hasResults){
+                        resultsSet = prstSelect.getResultSet();
+                        resultsSet.next();
+
+                        ds.setStart(LocalTime.parse(resultsSet.getString("start")));
+                        ds.getDock();
+                        ds.setStart(LocalTime.parse(resultsSet.getString("start")));
+                        ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
+                        ds.setInterval(resultsSet.getInt("interval"));
+                        ds.setGraceperiod(resultsSet.getInt("graceperiod"));
+                        ds.setDock(resultsSet.getInt("dock"));
+                        ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
+                        ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
+                        ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
+
+                        outputShift = new Shift(ds);
+                    }
+                }
+                catch(Exception e){e.printStackTrace();}
             }
         }
         catch(Exception e) { e.printStackTrace(); }
