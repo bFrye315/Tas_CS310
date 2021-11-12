@@ -2,25 +2,14 @@ package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
-import java.time.temporal.ChronoUnit;
-import java.util.Locale;
 
 public class Punch {
     
-    private int terminalid;
-    private int id;
+    private int terminalid, id;
     private Badge badge;
     private PunchType punchtype;
-    private LocalDateTime originaltimestamp;
-    private LocalDateTime adjustedtimestamp;
+    private LocalDateTime originaltimestamp, adjustedtimestamp;
     private String adjustmenttype;
-
-    // the 3 param constructor now sets the originaltimestamp to the current
-    // time when it is made, the setOriginaltimestamp method can still change it
-    // after the fact, as seen in the getPunch method in TASDatabase, but i figured 
-    // that that's what was needed after looking at how the test for feature 2 was
-    // written. thats the part im not sure of
     
     public Punch(int terminalid, Badge badge, int punchtypeid){
         this.terminalid = terminalid;
@@ -33,8 +22,7 @@ public class Punch {
         this.terminalid = terminalid;
         this.badge = badge;
         this.punchtype = PunchType.values()[punchtypeid];
-        this.originaltimestamp = originaltimestamp;
-        
+        this.originaltimestamp = originaltimestamp;        
     }
      public void setOriginaltimestamp(LocalDateTime originaltimestamp) {
         this.originaltimestamp = originaltimestamp;
@@ -51,9 +39,6 @@ public class Punch {
     public void setId(int id) {
         this.id = id;
     }
-     
-     
-
 
     public int getTerminalid() {
         return terminalid;
@@ -89,9 +74,7 @@ public class Punch {
         StringBuilder s = new StringBuilder();
         s.append("#").append(badge.getId()).append(" ").append(punchtype).append(": ").
                 append(adjustedtimestamp.format(format).toUpperCase()).
-                append(" (").
-                append(adjustmenttype).
-                append(")");
+                append(" (").append(adjustmenttype).append(")");
                 
         return s.toString();
     }
@@ -114,17 +97,12 @@ public class Punch {
 
         int min = punchTime.getMinute();
         int sec = punchTime.getSecond();
-       
-        
-        
-       
-        
+
         // on time
         if(zeroPT.equals(shiftStart) || zeroPT.equals(shiftStop) || zeroPT.equals(lunchStart) || zeroPT.equals(lunchStop)){
             if (zeroPT.equals(shiftStart)){
                 adjustedPT = shiftStart;
-                this.adjustmenttype = "Shift Start";
-                
+                this.adjustmenttype = "Shift Start";                
             }
             else if(zeroPT.equals(shiftStop)){
                 adjustedPT = shiftStop;
@@ -137,8 +115,7 @@ public class Punch {
             else{
                 adjustedPT = lunchStop;
                 this.adjustmenttype = "Lunch Stop";
-            }
-            
+            }            
         }
         // punch in late start
         else if ((punchTime.isAfter(shiftStart)) && (punchTime.isBefore(shiftStart.plusMinutes(interval)) 
@@ -154,7 +131,6 @@ public class Punch {
                 adjustedPT = shiftStart.plusMinutes(dock);
                 this.adjustmenttype = "Shift Dock";
             }
-
         }
         // punch in early start
         else if((punchTime.isBefore(shiftStart)) && (punchTime.isAfter(shiftStart.minusMinutes(interval)) 
@@ -163,9 +139,7 @@ public class Punch {
                 && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY)) ){
                 adjustedPT = shiftStart;
                 this.adjustmenttype = "Shift Start";
-        }
-       
-        
+        }               
         //punch out early stop
         else if((punchTime.isBefore(shiftStop)) && (punchTime.isAfter(shiftStop.minusMinutes(interval)) 
                 || punchTime.equals(shiftStop.minusMinutes(interval))) && (punchtype != PunchType.CLOCK_IN) 
@@ -179,8 +153,7 @@ public class Punch {
                 adjustedPT = shiftStop.minusMinutes(dock);
                 this.adjustmenttype = "Shift Dock";
              }        
-        }
-        
+        }        
         // punch out late stop
         else if((punchTime.isAfter(shiftStop)) && (punchTime.isBefore(shiftStop.plusMinutes(interval)) 
                 || punchTime.equals(shiftStop.plusMinutes(interval))) && (punchtype != PunchType.CLOCK_IN) 
@@ -188,8 +161,7 @@ public class Punch {
                 && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SUNDAY))){
             adjustedPT = shiftStop;
             this.adjustmenttype = "Shift Stop";
-        }
-        
+        }        
         // punch in late lunchstart
         else if((punchTime.isAfter(lunchStart)) && (punchTime.isBefore(lunchStop)) 
                 && (!originaltimestamp.getDayOfWeek().equals(DayOfWeek.SATURDAY)) 
@@ -201,10 +173,8 @@ public class Punch {
             else if(punchtype.equals(PunchType.CLOCK_IN)){
                 adjustedPT = lunchStop;
                 this.adjustmenttype = "Lunch Stop";
-            }
-            
-        }
-        
+            }            
+        }        
         // interval round
         else if ((!(min == interval)) && (!(min == (interval  + interval))) && (!(min == (interval + interval + interval))) && (!(min == ZERO))){
             int mod = min % interval;
@@ -221,22 +191,17 @@ public class Punch {
                 else{
                     adjustedPT = punchTime.minusMinutes(mod).withSecond(0);
                     this.adjustmenttype = "Interval Round";
-                }
-                
+                }                
             }
             else if(mod > 8){
                 adjustedPT = punchTime.plusMinutes(interval - mod).withSecond(0);
                 this.adjustmenttype = "Interval Round";
-            }
-           
-           
-            
+            }           
         }
         else{
             adjustedPT = punchTime.withSecond(ZERO).withNano(ZERO);
             this.adjustmenttype = "None";
         }
-
         this.adjustedtimestamp = adjustedPT;
     }
 }
