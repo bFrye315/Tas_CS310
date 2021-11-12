@@ -11,9 +11,9 @@ import java.time.*;
 public class Shift {
     private final int MINPERHOUR = 60;
 
-    private String description;
+    private String description ;
    
-    private int shiftid;
+    private int shiftid, dailyscheduleid;
     private int lunchduration;
     private int shiftduration; 
     
@@ -38,6 +38,11 @@ public class Shift {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    
     public LocalTime getStart() {
   
         
@@ -80,6 +85,20 @@ public class Shift {
         return shiftid;
     }
 
+    public void setShiftid(int shiftid) {
+        this.shiftid = shiftid;
+    }
+
+    
+    public int getDailyscheduleid() {
+        return dailyscheduleid;
+    }
+
+    public void setDailyscheduleid(int dailyscheduleid) {
+        this.dailyscheduleid = dailyscheduleid;
+    }
+    
+    
     public int getLunchduration() {
         return lunchduration;
     }
