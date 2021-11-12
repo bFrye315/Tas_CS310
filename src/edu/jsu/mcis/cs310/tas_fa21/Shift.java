@@ -4,36 +4,24 @@ Date: 10/1/21
  */
 package edu.jsu.mcis.cs310.tas_fa21;
 
-
 import java.time.*;
 
-// in shift I removed the original constructor that was just commented out as well as imports that were unused
 public class Shift {
     private final int MINPERHOUR = 60;
-
-    private String description ;
-   
-    private int shiftid, dailyscheduleid;
-    private int lunchduration;
-    private int shiftduration; 
-    
+    private String description ;   
+    private int shiftid, dailyscheduleid, lunchduration, shiftduration;    
     private DailySchedule ds;
     
     public Shift(ShiftParameters params) {
         this.description = params.getDescription();
-
         this.shiftid = params.getId();
-        
+        this.dailyscheduleid = params.getDailyscheduleid();
         this.ds = new DailySchedule(params);
         
         setShiftduration(params.getStart(), params.getStop());
         setLunchduration(params.getLunchstart(), params.getLunchstop());
     }
-     public Shift(Badge badgeid){
-         
-    }
-
-     
+ 
     public String getDescription() {
         return description;
     }
@@ -41,11 +29,8 @@ public class Shift {
     public void setDescription(String description) {
         this.description = description;
     }
-
     
-    public LocalTime getStart() {
-  
-        
+    public LocalTime getStart() {       
         return ds.getStart();
     }
 
@@ -53,23 +38,19 @@ public class Shift {
         return ds.getStop();
     }
 
-    public int getInterval() {
- 
+    public int getInterval() { 
         return ds.getInterval();
     }
 
-    public int getGraceperiod() {
- 
+    public int getGraceperiod() { 
         return ds.getGraceperiod();
     }
 
     public int getDock() {
-
         return ds.getDock();
     }
 
-    public LocalTime getLunchstart() {
-   
+    public LocalTime getLunchstart() {   
         return ds.getLunchstart();
     }
 
@@ -128,8 +109,6 @@ public class Shift {
         s.append(description).append(": ").append(ds.getStart()).append(" - ").append(ds.getStop()).append(" (")
                 .append(shiftduration).append(" minutes); Lunch: ").append(ds.getLunchstart()).append(" - ")
                 .append(ds.getLunchstop()).append(" (").append(lunchduration).append(" minutes)");
-        return s.toString();
-        
-        
+        return s.toString();    
     }
 }
