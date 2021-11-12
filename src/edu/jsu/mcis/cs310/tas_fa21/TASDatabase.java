@@ -235,7 +235,7 @@ public class TASDatabase {
           
 
          try{
-             query = "INSERT INTO tas_fa21_v1.punch (terminalid, badgeid, originaltimestamp, punchtypeid) VALUES (?, ?, ?, ?)"; 
+             query = "INSERT INTO tas_fa21_v2.punch (terminalid, badgeid, originaltimestamp, punchtypeid) VALUES (?, ?, ?, ?)"; 
              prstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS); 
              
              prstUpdate.setInt(1, terminalid);
@@ -398,10 +398,10 @@ public class TASDatabase {
         
         try {
             if(getAbsenteeism(absenteeism.getBadge(), payperiod.toLocalDate()) == null){
-                query = "INSERT INTO tas_fa21_v1.absenteeism (badgeid, payperiod, percentage) VALUES (?, ?, ?)";
+                query = "INSERT INTO tas_fa21_v2.absenteeism (badgeid, payperiod, percentage) VALUES (?, ?, ?)";
             }
             else{
-                query = "UPDATE tas_fa21_v1.absenteeism SET badgeid = ? WHERE payperiod = ? AND percentage = ?";
+                query = "UPDATE tas_fa21_v2.absenteeism SET badgeid = ? WHERE payperiod = ? AND percentage = ?";
             }
             prstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             
