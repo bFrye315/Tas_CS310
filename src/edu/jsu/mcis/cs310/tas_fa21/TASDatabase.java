@@ -119,6 +119,29 @@ public class TASDatabase {
             if(hasResults){
                 ResultSet resultsSet = prstSelect.getResultSet();
                 resultsSet.next();
+                
+                ShiftParameters ds = new ShiftParameters();
+                //DailySchedule ds = new DailySchedule();
+                
+                //ds.setStart(LocalTime.parse(resultsSet.getString("start")));
+                //ds.getDock();
+                ds.setDescription(resultsSet.getString("description"));
+                ds.setStart(LocalTime.parse(resultsSet.getString("start")));
+                ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
+                ds.setInterval(resultsSet.getInt("interval"));
+                ds.setGraceperiod(resultsSet.getInt("graceperiod"));
+                ds.setDock(resultsSet.getInt("dock"));
+                ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
+                ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
+                ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
+                ds.setId(shiftid);
+                
+                outputShift = new Shift(ds);
+            }
+            
+            /*if(hasResults){
+                ResultSet resultsSet = prstSelect.getResultSet();
+                resultsSet.next();
                     
                 ShiftParameters params = new ShiftParameters();
                     
@@ -134,7 +157,7 @@ public class TASDatabase {
                 params.setId(shiftid);
                     
                 outputShift = new Shift(params);
-            }
+            }*/
         }
         catch(Exception e){e.printStackTrace();}
         
