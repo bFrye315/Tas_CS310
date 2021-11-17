@@ -4,6 +4,7 @@ import java.sql.*;
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 //Feature 1
 public class TASDatabase {
@@ -103,7 +104,7 @@ public class TASDatabase {
                 resultsSet.next();
 
                 ds.setDescription(resultsSet.getString("description"));
-                ds.setId(shiftid);
+                ds.setShiftid(shiftid);
                 ds.setStart(LocalTime.parse(resultsSet.getString("start")));
                 ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
                 ds.setInterval(resultsSet.getInt("interval"));
@@ -112,7 +113,7 @@ public class TASDatabase {
                 ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
                 ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
                 ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
-                ds.setDailyscheduleid(resultsSet.getInt("dailyscheduleid"));
+                ds.setShiftdailyscheduleid(resultsSet.getInt("dailyscheduleid"));
                 
                 outputShift = new Shift(ds);              
             }
@@ -134,7 +135,7 @@ public class TASDatabase {
                 resultsSet.next();
 
                 ds.setDescription(resultsSet.getString("description"));
-                ds.setId(resultsSet.getInt("id"));
+                ds.setShiftid(resultsSet.getInt("shift.id"));
                 ds.setStart(LocalTime.parse(resultsSet.getString("start")));
                 ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
                 ds.setInterval(resultsSet.getInt("interval"));
@@ -143,7 +144,7 @@ public class TASDatabase {
                 ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
                 ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
                 ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
-                ds.setDailyscheduleid(resultsSet.getInt("dailyscheduleid"));
+                ds.setShiftdailyscheduleid(resultsSet.getInt("dailyscheduleid"));
                 
                 outputShift = new Shift(ds);
             }
@@ -229,7 +230,7 @@ public class TASDatabase {
                 
                 double percentage = resultsSet.getDouble("percentage");
 
-                outputAbsenteeism = new Absenteeism(badge.getId(), payperiod, percentage);
+                outputAbsenteeism = new Absenteeism(badge.getId(), payperiod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)), percentage);
             }           
         }
         catch(Exception e){e.printStackTrace();}
@@ -304,44 +305,12 @@ public class TASDatabase {
         catch(Exception e){e.printStackTrace();}
     }
     
-    
-    
-    public Shift getShift(int shiftid, LocalDate date) {
-        Shift outputShift = null;
-        ShiftParameters ds = new ShiftParameters();
-        try{
-            query = "SELECT * FROM shift, dailyschedule WHERE shift.id = ? AND dailyschedule.id = (SELECT dailyscheduleid FROM shift WHERE id = ?) ";
-            prstSelect = conn.prepareStatement(query);
-            prstSelect.setInt(1, shiftid);
-            prstSelect.setInt(2, shiftid);
-            
-            boolean hasResults = prstSelect.execute(); 
-            if(hasResults){
-                ResultSet resultsSet = prstSelect.getResultSet();
-                resultsSet.next();
 
-                ds.setDescription(resultsSet.getString("description"));
-                ds.setId(shiftid);
-                ds.setStart(LocalTime.parse(resultsSet.getString("start")));
-                ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
-                ds.setInterval(resultsSet.getInt("interval"));
-                ds.setGraceperiod(resultsSet.getInt("graceperiod"));
-                ds.setDock(resultsSet.getInt("dock"));
-                ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
-                ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
-                ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
-                ds.setDailyscheduleid(resultsSet.getInt("dailyscheduleid"));
-
-                outputShift = new Shift(ds);              
-            }
-        }
-        catch(Exception e){e.printStackTrace();}
-        return outputShift;    
-    }
-      
     public Shift getShift(Badge badge, LocalDate date){ 
         Shift outputShift = null;
         ShiftParameters ds = new ShiftParameters();
+        DailySchedule daily;
+        HashMap<Integer, DailySchedule> schedule;
         try{
             query = "SELECT * FROM shift, dailyschedule WHERE shift.id = (SELECT shiftid FROM employee WHERE badgeid = ?) AND dailyschedule.id = (SELECT dailyscheduleid FROM shift WHERE id = (SELECT shiftid FROM employee WHERE badgeid = ?))";
             prstSelect = conn.prepareStatement(query);
@@ -351,9 +320,11 @@ public class TASDatabase {
             if(hasResults){
                 ResultSet resultsSet = prstSelect.getResultSet();
                 resultsSet.next();
-
+                // shift
                 ds.setDescription(resultsSet.getString("description"));
-                ds.setId(resultsSet.getInt("id"));
+                ds.setShiftid(resultsSet.getInt("shift.id"));
+                ds.setShiftdailyscheduleid(resultsSet.getInt("dailyscheduleid"));
+                // dailyschedule
                 ds.setStart(LocalTime.parse(resultsSet.getString("start")));
                 ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
                 ds.setInterval(resultsSet.getInt("interval"));
@@ -362,12 +333,166 @@ public class TASDatabase {
                 ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
                 ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
                 ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
-                ds.setDailyscheduleid(resultsSet.getInt("dailyscheduleid"));
-
+                
                 outputShift = new Shift(ds);
             }
         }
-        catch(Exception e) { e.printStackTrace(); }        
+        catch(Exception e) { e.printStackTrace(); }
+        
+        // override
+        schedule = outputShift.getSchedule();
+        try{
+            query = "SELECT * FROM scheduleoverride";
+            prstSelect = conn.prepareStatement(query);
+            
+            boolean hasResults = prstSelect.execute();
+            if(hasResults){
+                ResultSet resultsSet = prstSelect.getResultSet();
+                while(resultsSet.next()){
+                    ds.setOverrideschedule(resultsSet.getInt("dailyscheduleid"));
+                    ds.setDay(resultsSet.getInt("day"));
+                    
+                    if(resultsSet.getString("badgeid") == null){
+                        ds.setBadgeid(null);
+                    }
+                    else{
+                        ds.setBadgeid(resultsSet.getString("badgeid"));
+                    }
+                    
+                    ds.setOverridestart(resultsSet.getDate("start").toLocalDate());
+                    
+                    if(resultsSet.getTimestamp("end") == null){
+                        ds.setOverrideend(null);
+                    }
+                    else{
+                        ds.setOverrideend(resultsSet.getDate("end").toLocalDate());
+                    }
+                    
+                    ds.setOverrideid(resultsSet.getInt("id"));
+                    boolean check = false;
+                    if(!(ds.getBadgeid() == null) && !(ds.getOverrideend() == null)){
+                        if((date.isEqual(ds.getOverridestart()) || date.isAfter(ds.getOverridestart()) && date.isBefore(ds.getOverrideend()) || ds.getOverrideend().isEqual(date)) && badge.getId().equals(ds.getBadgeid())){
+                            try{
+                                query = "SELECT * FROM dailyschedule WHERE id = ?";
+                                prstSelect = conn.prepareStatement(query);
+                                prstSelect.setInt(1, ds.getOverrideschedule());
+                                hasResults = prstSelect.execute();
+                                if(hasResults){
+                                    resultsSet = prstSelect.getResultSet();
+                                    resultsSet.next();
+                                    
+                                    ds.setStart(LocalTime.parse(resultsSet.getString("start")));
+                                    ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
+                                    ds.setInterval(resultsSet.getInt("interval"));
+                                    ds.setGraceperiod(resultsSet.getInt("graceperiod"));
+                                    ds.setDock(resultsSet.getInt("dock"));
+                                    ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
+                                    ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
+                                    ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
+                                    daily = new DailySchedule(ds);
+                                    schedule.replace(ds.getDay(), daily);
+                                    check = true;
+                                }
+                            }
+                            catch(Exception e) { e.printStackTrace(); }
+                            
+                        }
+                    }
+                    else if (ds.getBadgeid() == null && !(ds.getOverrideend() == null)){
+                        if(date.isEqual(ds.getOverridestart()) || date.isAfter(ds.getOverridestart()) && date.isBefore(ds.getOverrideend()) || ds.getOverrideend().isEqual(date)){
+                            try{
+                                query = "SELECT * FROM dailyschedule WHERE id = ?";
+                                prstSelect = conn.prepareStatement(query);
+                                prstSelect.setInt(1, ds.getOverrideschedule());
+                                hasResults = prstSelect.execute();
+                                if(hasResults){
+                                    resultsSet = prstSelect.getResultSet();
+                                    resultsSet.next();
+                                    
+                                    ds.setStart(LocalTime.parse(resultsSet.getString("start")));
+                                    ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
+                                    ds.setInterval(resultsSet.getInt("interval"));
+                                    ds.setGraceperiod(resultsSet.getInt("graceperiod"));
+                                    ds.setDock(resultsSet.getInt("dock"));
+                                    ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
+                                    ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
+                                    ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
+                                    daily = new DailySchedule(ds);
+                                    schedule.replace(ds.getDay(), daily);
+                                    
+                                }
+                            }
+                            catch(Exception e) { e.printStackTrace(); }
+                            check = true;
+                        }
+                    }
+                    else if (!(ds.getBadgeid() == null) && ds.getOverrideend() == null){
+                        if((date.isEqual(ds.getOverridestart()) || date.isAfter(ds.getOverridestart()))  && badge.getId().equals(ds.getBadgeid())){
+                            try{
+                                query = "SELECT * FROM dailyschedule WHERE id = ?";
+                                prstSelect = conn.prepareStatement(query);
+                                prstSelect.setInt(1, ds.getOverrideschedule());
+                                hasResults = prstSelect.execute();
+                                if(hasResults){
+                                    resultsSet = prstSelect.getResultSet();
+                                    resultsSet.next();
+                                    
+                                    ds.setStart(LocalTime.parse(resultsSet.getString("start")));
+                                    ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
+                                    ds.setInterval(resultsSet.getInt("interval"));
+                                    ds.setGraceperiod(resultsSet.getInt("graceperiod"));
+                                    ds.setDock(resultsSet.getInt("dock"));
+                                    ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
+                                    ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
+                                    ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
+                                    daily = new DailySchedule(ds);
+                                    schedule.replace(ds.getDay(), daily);
+                                    
+                                }
+                            }
+                            catch(Exception e) { e.printStackTrace(); }
+                            check = true;
+                        }
+                    }
+                    else if(ds.getBadgeid() == null && ds.getOverrideend() == null){
+                        if(date.isEqual(ds.getOverridestart()) || date.isAfter(ds.getOverridestart())){
+                            try{
+                                query = "SELECT * FROM dailyschedule WHERE id = ?";
+                                prstSelect = conn.prepareStatement(query);
+                                prstSelect.setInt(1, ds.getOverrideschedule());
+                                hasResults = prstSelect.execute();
+                                if(hasResults){
+                                    resultsSet = prstSelect.getResultSet();
+                                    resultsSet.next();
+                                    
+                                    ds.setStart(LocalTime.parse(resultsSet.getString("start")));
+                                    ds.setStop(LocalTime.parse(resultsSet.getString("stop")));
+                                    ds.setInterval(resultsSet.getInt("interval"));
+                                    ds.setGraceperiod(resultsSet.getInt("graceperiod"));
+                                    ds.setDock(resultsSet.getInt("dock"));
+                                    ds.setLunchstart(LocalTime.parse(resultsSet.getString("lunchstart")));
+                                    ds.setLunchstop(LocalTime.parse(resultsSet.getString("lunchstop")));
+                                    ds.setLunchdeduct(resultsSet.getInt("lunchdeduct"));
+                                    daily = new DailySchedule(ds);
+                                    schedule.replace(ds.getDay(), daily);
+                                    
+                                }
+                            }
+                            catch(Exception e) { e.printStackTrace(); }
+                            check = true;
+                            
+                        }
+                    }
+                    if(check){
+                        break;
+                    }
+                }
+                
+            }
+        }
+        catch(Exception e) { e.printStackTrace(); }
+
+        outputShift.setSchedule(schedule);
         return outputShift;
     }
     

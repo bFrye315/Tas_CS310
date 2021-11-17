@@ -19,7 +19,7 @@ public class Badge {
         // ID setter
     public void setID(String newID){
             this.id = newID;
-}
+    }
         //Description Getter
     public String getDescription() {
         return description;

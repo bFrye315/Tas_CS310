@@ -1,19 +1,20 @@
 package edu.jsu.mcis.cs310.tas_fa21;
 
-import java.time.LocalTime;
+import java.time.*;
 
 public class ShiftParameters {
     
-    private int id, interval, graceperiod, dock, lunchdeduct, dailyscheduleid;
+    private int shiftid, overrideid, interval, graceperiod, day, dock, lunchdeduct, shiftdailyscheduleid, overrideschedule;
     private LocalTime start, stop, lunchstart, lunchstop;
-    private String description;
+    private LocalDate overridestart, overrideend;
+    private String description, badgeid;
 
-    public int getId() {
-        return id;
+    public int getShiftid() {
+        return shiftid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setShiftid(int shiftid) {
+        this.shiftid = shiftid;
     }
 
     public int getInterval() {
@@ -88,12 +89,60 @@ public class ShiftParameters {
         this.description = description;
     }
 
-    public int getDailyscheduleid() {
-        return dailyscheduleid;
+    public int getShiftdailyscheduleid() {
+        return shiftdailyscheduleid;
     }
 
-    public void setDailyscheduleid(int dailyscheduleid) {
-        this.dailyscheduleid = dailyscheduleid;
+    public void setShiftdailyscheduleid(int dailyscheduleid) {
+        this.shiftdailyscheduleid = dailyscheduleid;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public int getOverrideschedule() {
+        return overrideschedule;
+    }
+
+    public void setOverrideschedule(int overrideschedule) {
+        this.overrideschedule = overrideschedule;
+    }
+
+    public int getOverrideid() {
+        return overrideid;
+    }
+
+    public void setOverrideid(int overrideid) {
+        this.overrideid = overrideid;
+    }
+
+    public LocalDate getOverridestart() {
+        return overridestart;
+    }
+
+    public void setOverridestart(LocalDate overridestart) {
+        this.overridestart = overridestart;
+    }
+
+    public LocalDate getOverrideend() {
+        return overrideend;
+    }
+
+    public void setOverrideend(LocalDate overrideend) {
+        this.overrideend = overrideend;
+    }
+
+    public String getBadgeid() {
+        return badgeid;
+    }
+
+    public void setBadgeid(String badgeid) {
+        this.badgeid = badgeid;
     }
     
 }

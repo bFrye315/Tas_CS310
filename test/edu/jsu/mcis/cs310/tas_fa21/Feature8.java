@@ -167,7 +167,7 @@ public class Feature8 {
         percentage = TAS.calculateAbsenteeism(p4, s);
         Absenteeism a4 = new Absenteeism(b, gc, percentage);
         
-        assertEquals("#0FFA272B (Pay Period Starting 09-16-2018): 55.00%", a4.toString());
+         assertEquals("#0FFA272B (Pay Period Starting 09-16-2018): 55.00%", a4.toString());
         
     }
     

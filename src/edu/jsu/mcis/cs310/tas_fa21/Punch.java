@@ -2,6 +2,7 @@ package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 
 public class Punch {
     
@@ -85,15 +86,28 @@ public class Punch {
         LocalDateTime zeroPT = punchTime.withSecond(ZERO).withNano(ZERO);
         
         LocalDateTime adjustedPT = null;
+        int day = punchTime.toLocalDate().getDayOfWeek().getValue();
         
         LocalDateTime shiftStart = s.getStart().atDate(originaltimestamp.toLocalDate());
         LocalDateTime shiftStop = s.getStop().atDate(originaltimestamp.toLocalDate());
         LocalDateTime lunchStart = s.getLunchstart().atDate(originaltimestamp.toLocalDate());
         LocalDateTime lunchStop = s.getLunchstop().atDate(originaltimestamp.toLocalDate());
-        
+
         int interval = s.getInterval();
         int gracePeriod = s.getGraceperiod();
         int dock = s.getDock();
+        if(day >= Calendar.MONDAY && day <= Calendar.FRIDAY){
+            shiftStart = s.getStart(day).atDate(originaltimestamp.toLocalDate());
+            shiftStop = s.getStop(day).atDate(originaltimestamp.toLocalDate());
+            lunchStart = s.getLunchstart(day).atDate(originaltimestamp.toLocalDate());
+            lunchStop = s.getLunchstop(day).atDate(originaltimestamp.toLocalDate());
+
+            interval = s.getInterval(day);
+            gracePeriod = s.getGraceperiod(day);
+            dock = s.getDock(day);
+        }
+        
+        
 
         int min = punchTime.getMinute();
         int sec = punchTime.getSecond();
@@ -193,7 +207,7 @@ public class Punch {
                     this.adjustmenttype = "Interval Round";
                 }                
             }
-            else if(mod > 8){
+            else if(mod >= 8){
                 adjustedPT = punchTime.plusMinutes(interval - mod).withSecond(0);
                 this.adjustmenttype = "Interval Round";
             }           
@@ -204,4 +218,6 @@ public class Punch {
         }
         this.adjustedtimestamp = adjustedPT;
     }
+    
+    
 }

@@ -7,9 +7,11 @@
  */
 package edu.jsu.mcis.cs310.tas_fa21;
 import java.text.DecimalFormat;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.HashMap;
 import org.json.simple.*; 
 
@@ -33,10 +35,11 @@ public class TAS {
         ArrayList<ArrayList<Punch>> listOfPunchByDay = new ArrayList<>();
 
         for(Punch p : punchList){
+            
             switch(p.getAdjustedtimestamp().getDayOfWeek().getValue()){
                 case 1:
                     monPun.add(p);
-                    
+
                     break;
                 case 2:
                     tuePun.add(p);
@@ -92,18 +95,35 @@ public class TAS {
                 for (int j = 0; j < day.size(); j+=2) {
                     Duration duration = Duration.between(day.get(j).getAdjustedtimestamp(), day.get(j + 1).getAdjustedtimestamp());
                     int totalMinutes = (int)duration.toMinutes();
-                    totalTime = totalTime + totalMinutes;
+                    if (totalMinutes < 0){
+                        totalTime = totalTime + (totalMinutes * -1);
+                    }
+                    else{
+                        totalTime = totalTime + totalMinutes;
+                    }
+                    
                 }
                 boolean lunchClockOut = false;
                 for(Punch punch : day){
+                    int g = punch.getAdjustedtimestamp().toLocalDate().getDayOfWeek().getValue();
+                    
+                   
                     if(punch.getAdjustedtimestamp().toLocalTime().equals(shift.getLunchstart())){
-                        lunchClockOut = true;
-                        break;
-                    }    
+                        if(g==DayOfWeek.SATURDAY.getValue()){
+                            lunchClockOut = false;
+                            break;
+                        }
+                        else{
+                            lunchClockOut = true;
+                            break; 
+                        }
+                    }        
                 }
-                if(!lunchClockOut && totalTime >= shift.getLunchdeduct()){
+                
+                if(lunchClockOut == false && totalTime > shift.getLunchdeduct()){
                     totalTime = totalTime - shift.getLunchduration();
-                }               
+                }
+                              
             }
             catch(IndexOutOfBoundsException e1) {
                 System.out.println("Odd number of punches");
@@ -140,15 +160,24 @@ public class TAS {
         
         double percentage = 0;
         double totalWeeklyMinutes = 0;
-        final double FORTYHRWEEK = 2400;
+        double total = 0;
+        for (int i = Calendar.MONDAY; i <= Calendar.FRIDAY; i++){
+            Duration duration = Duration.between(s.getSchedule().get(i).getStart(), s.getSchedule().get(i).getStop());
+            total = total + (double)duration.toMinutes();
+            duration = Duration.between(s.getSchedule().get(i).getLunchstart(), s.getSchedule().get(i).getLunchstop());
+            total = total - (double)duration.toMinutes();
+        }
+        
+        
         final double TOP_PERCENTAGE = 100;
 
         totalWeeklyMinutes = calculateTotalMinutes(punchlist, s);
         
-        percentage = (totalWeeklyMinutes/FORTYHRWEEK) * TOP_PERCENTAGE;
+        percentage = (totalWeeklyMinutes/total) * TOP_PERCENTAGE;
         
         percentage = TOP_PERCENTAGE - percentage;
-        percentage = Math.round(percentage * TOP_PERCENTAGE)/TOP_PERCENTAGE;
+        // Math.round problem
+        percentage = (percentage * TOP_PERCENTAGE)/TOP_PERCENTAGE;
         
         return percentage;
     }
