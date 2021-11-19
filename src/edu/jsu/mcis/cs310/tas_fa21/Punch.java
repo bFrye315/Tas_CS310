@@ -192,13 +192,14 @@ public class Punch {
         // interval round
         else if ((!(min == interval)) && (!(min == (interval  + interval))) && (!(min == (interval + interval + interval))) && (!(min == ZERO))){
             int mod = min % interval;
-            
-            if(mod < Math.ceil(interval / 2.0)){
-                if(mod == 7 && sec < interval + interval){
+            final double HALFINTERVAL = interval / 2.0;
+           
+            if(mod < Math.ceil(HALFINTERVAL)){
+                if(mod == Math.floor(HALFINTERVAL) && sec < interval + interval){
                     adjustedPT = punchTime.minusMinutes(mod).withSecond(0);
                     this.adjustmenttype = "Interval Round";   
                 }
-                else if (mod == 7 && sec >= interval + interval) {
+                else if (mod == Math.floor(HALFINTERVAL) && sec >= interval + interval) {
                     adjustedPT = punchTime.plusMinutes(interval - mod).withSecond(0);
                     this.adjustmenttype = "Interval Round";
                 }
@@ -207,7 +208,7 @@ public class Punch {
                     this.adjustmenttype = "Interval Round";
                 }                
             }
-            else if(mod >= 8){
+            else if(mod >= Math.ceil(HALFINTERVAL)){
                 adjustedPT = punchTime.plusMinutes(interval - mod).withSecond(0);
                 this.adjustmenttype = "Interval Round";
             }           

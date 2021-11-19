@@ -228,9 +228,11 @@ public class TASDatabase {
                 ResultSet resultsSet = prstSelect.getResultSet();
                 resultsSet.next();
                 
+                String badgeid = resultsSet.getString("badgeid");
+                LocalDate period = resultsSet.getTimestamp("payperiod").toLocalDateTime().toLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
                 double percentage = resultsSet.getDouble("percentage");
-
-                outputAbsenteeism = new Absenteeism(badge.getId(), payperiod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)), percentage);
+                
+                outputAbsenteeism = new Absenteeism(badgeid, period, percentage);
             }           
         }
         catch(Exception e){e.printStackTrace();}
@@ -286,18 +288,29 @@ public class TASDatabase {
         String badgeid = absenteeism.getBadgeid();
         LocalDateTime payperiod = absenteeism.getPayperiod();
         Double percentage = absenteeism.getPercentage();
+        Absenteeism a1 = getAbsenteeism(absenteeism.getBadge(), payperiod.toLocalDate());
         
-        try {
-            if(getAbsenteeism(absenteeism.getBadge(), payperiod.toLocalDate()) == null){
-                query = "INSERT INTO tas_fa21_v2.absenteeism (badgeid, payperiod, percentage) VALUES (?, ?, ?)";
+        if(a1 != null){
+            try{
+                String query1 = "DELETE FROM absenteeism WHERE badgeid = ? AND payperiod = ?";
+                PreparedStatement ps = conn.prepareStatement(query1);
+                ps.setString(1, badgeid);
+                ps.setTimestamp(2, java.sql.Timestamp.valueOf(payperiod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))));
+                
+                updateCount = ps.executeUpdate();
+                
             }
-            else{
-                query = "UPDATE tas_fa21_v2.absenteeism SET badgeid = ? WHERE payperiod = ? AND percentage = ?";
-            }
-            prstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);            
-            prstUpdate.setString(1, badgeid);
-            prstUpdate.setTimestamp(2, java.sql.Timestamp.valueOf(payperiod));
-            prstUpdate.setDouble(3, percentage);           
+             catch(Exception e){e.printStackTrace();}
+            query = "INSERT INTO tas_fa21_v2.absenteeism (percentage, badgeid, payperiod) VALUES (?, ?, ?)";
+        }
+        else{
+            query = "INSERT INTO tas_fa21_v2.absenteeism (percentage, badgeid, payperiod) VALUES (?, ?, ?)";
+        }
+        try {            
+            prstUpdate = conn.prepareStatement(query);            
+            prstUpdate.setDouble(1, percentage);
+            prstUpdate.setString(2, badgeid);           
+            prstUpdate.setTimestamp(3, java.sql.Timestamp.valueOf(payperiod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))));
             // Execute the query
             updateCount = prstUpdate.executeUpdate();
             

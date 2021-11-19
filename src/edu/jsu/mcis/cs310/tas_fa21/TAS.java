@@ -96,7 +96,7 @@ public class TAS {
                     Duration duration = Duration.between(day.get(j).getAdjustedtimestamp(), day.get(j + 1).getAdjustedtimestamp());
                     int totalMinutes = (int)duration.toMinutes();
                     if (totalMinutes < 0){
-                        totalTime = totalTime + (totalMinutes * -1);
+                        totalTime = totalTime + (Math.abs(totalMinutes));
                     }
                     else{
                         totalTime = totalTime + totalMinutes;
@@ -176,8 +176,10 @@ public class TAS {
         percentage = (totalWeeklyMinutes/total) * TOP_PERCENTAGE;
         
         percentage = TOP_PERCENTAGE - percentage;
-        // Math.round problem
+        
         percentage = (percentage * TOP_PERCENTAGE)/TOP_PERCENTAGE;
+        
+        percentage = Double.parseDouble(String.format("%.2f", percentage));
         
         return percentage;
     }
