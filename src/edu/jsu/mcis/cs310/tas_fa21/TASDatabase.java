@@ -162,7 +162,7 @@ public class TASDatabase {
         PunchType punchtypeid = p.getPunchtype(); 
          try{
             query = "INSERT INTO tas_fa21_v2.punch (terminalid, badgeid, originaltimestamp, punchtypeid) VALUES (?, ?, ?, ?)"; 
-            prstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS); 
+            prstUpdate = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS); 
 
             prstUpdate.setInt(1, terminalid);
             prstUpdate.setString(2, badgeid);
